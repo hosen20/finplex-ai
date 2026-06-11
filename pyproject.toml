@@ -1,0 +1,32 @@
+[project]
+name = "finplex-ai"
+version = "0.1.0"
+description = "Finplex AI local-first fintech SaaS platform."
+requires-python = ">=3.11"
+
+[tool.uv.workspace]
+members = [
+    "services/api",
+    "services/model-server",
+    "services/guardrails",
+    "services/workers",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["B008"]
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+    "services/api/tests",
+    "services/model-server/tests",
+    "services/guardrails/tests",
+    "services/workers/tests",
+]
+python_files = ["test_*.py"]
+addopts = "-q"

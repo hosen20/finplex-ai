@@ -1,0 +1,19 @@
+[project]
+name = "finplex-api"
+version = "0.1.0"
+description = "FastAPI backend for Finplex AI."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115,<0.116",
+    "uvicorn[standard]>=0.34,<0.35",
+    "pydantic>=2.10,<3",
+    "pydantic-settings>=2.7,<3",
+    "python-multipart>=0.0.20,<0.1",
+    "httpx>=0.28,<0.29",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3,<9",
+    "ruff>=0.8,<0.9",
+]
