@@ -1,0 +1,18 @@
+[project]
+name = "finplex-guardrails"
+version = "0.1.0"
+description = "Guardrails service for compliant and evidence-based debt-collection drafts."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115,<0.116",
+    "uvicorn[standard]>=0.34,<0.35",
+    "pydantic>=2.10,<3",
+    "pydantic-settings>=2.7,<3",
+    "pyyaml>=6.0,<7",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3,<9",
+    "ruff>=0.8,<0.9",
+]

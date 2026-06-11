@@ -1,0 +1,16 @@
+[project]
+name = "finplex-workers"
+version = "0.1.0"
+description = "Local workers for asynchronous Finplex AI invoice processing."
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.10,<3",
+    "pydantic-settings>=2.7,<3",
+    "httpx>=0.28,<0.29",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3,<9",
+    "ruff>=0.8,<0.9",
+]

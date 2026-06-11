@@ -33,7 +33,7 @@ build/
 .vite/
 coverage/
 
-# Docker/local runtime data
+# Local runtime data
 docker-data/
 postgres-data/
 redis-data/
@@ -62,6 +62,5 @@ Thumbs.db
 *.bin
 *.safetensors
 
-# Keep documentation placeholders
 !services/model-server/models/README.md
 !services/model-server/models/model_card.json
