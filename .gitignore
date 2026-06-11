@@ -1,0 +1,67 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# Node / React
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+
+# Docker/local runtime data
+docker-data/
+postgres-data/
+redis-data/
+minio-data/
+kafka-data/
+storage/local/*
+!storage/local/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Large model artifacts
+*.joblib
+*.pkl
+*.pt
+*.onnx
+*.bin
+*.safetensors
+
+# Keep documentation placeholders
+!services/model-server/models/README.md
+!services/model-server/models/model_card.json
