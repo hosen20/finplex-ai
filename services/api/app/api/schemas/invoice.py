@@ -28,3 +28,10 @@ class InvoiceResponse(BaseModel):
     updated_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class InvoiceUploadResponse(BaseModel):
+    invoice: InvoiceResponse
+    event_id: str
+    event_type: str
+    event_topic: str

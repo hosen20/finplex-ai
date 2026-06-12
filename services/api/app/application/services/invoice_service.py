@@ -36,6 +36,7 @@ class InvoiceService:
         storage_key: str,
         customer_id: str | None = None,
         extracted_fields: dict[str, Any] | None = None,
+        invoice_id: str | None = None,
     ) -> InvoiceModel:
         tenant = self.tenants.get(tenant_id)
         actor = self.users.get(actor_user_id)
@@ -54,7 +55,7 @@ class InvoiceService:
         )
 
         invoice = InvoiceModel(
-            invoice_id=f"inv_{uuid4().hex}",
+            invoice_id=invoice_id or f"inv_{uuid4().hex}",
             tenant_id=tenant_id,
             uploaded_by_user_id=actor_user_id,
             customer_id=customer_id,

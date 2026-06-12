@@ -24,12 +24,15 @@ class Settings(BaseSettings):
 
     kafka_bootstrap_servers: str = "localhost:29092"
     kafka_invoice_uploaded_topic: str = "invoice.uploaded"
+    kafka_client_id: str = "finplex-api"
+    event_publisher_backend: str = "kafka"
 
     minio_endpoint: str = "localhost:9000"
     minio_root_user: str = "finplex_minio"
     minio_root_password: str = "finplex_minio_password"
     minio_bucket_invoices: str = "finplex-invoices"
     minio_secure: bool = False
+    invoice_storage_backend: str = "local"
 
     model_server_url: str = "http://localhost:8001"
     guardrails_url: str = "http://localhost:8002"
