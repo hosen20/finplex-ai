@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     groq_model: str = "llama-3.1-8b-instant"
 
     guardrails_url: str = "http://localhost:8002"
+    pipeline_version: str = "rules-v0.1"
 
     model_config = SettingsConfigDict(
         env_file=ROOT_DIR / ".env",
