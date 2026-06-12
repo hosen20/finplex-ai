@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.api.routers import health, inference
 from app.config import settings
 
 app = FastAPI(
@@ -8,6 +9,9 @@ app = FastAPI(
     description="AI service for extraction, RAG, risk scoring, and drafting.",
 )
 
+app.include_router(health.router)
+app.include_router(inference.router)
+
 
 @app.get("/")
 def root() -> dict[str, str]:
@@ -15,23 +19,4 @@ def root() -> dict[str, str]:
         "service": settings.app_name,
         "status": "running",
         "environment": settings.environment,
-    }
-
-
-@app.get("/health")
-def health_check() -> dict[str, str]:
-    return {
-        "service": "model-server",
-        "status": "ok",
-        "environment": settings.environment,
-        "llm_provider": settings.llm_provider,
-    }
-
-
-@app.get("/health/ready")
-def readiness_check() -> dict[str, str]:
-    return {
-        "service": "model-server",
-        "status": "ready",
-        "guardrails": settings.guardrails_url,
     }
