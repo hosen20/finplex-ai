@@ -1,10 +1,11 @@
 from app.api.schemas.tenant import (
-    TenantActionRequest,
     TenantCreateRequest,
     TenantResponse,
 )
 from app.application.services.tenant_service import TenantService
 from app.database import get_db_session
+from app.dependencies import get_current_user
+from app.infrastructure.db.models.user_model import UserModel
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -34,24 +35,24 @@ def list_tenants(session: Session = Depends(get_db_session)):
 @router.post("/{tenant_id}/suspend", response_model=TenantResponse)
 def suspend_tenant(
     tenant_id: str,
-    payload: TenantActionRequest,
+    current_user: UserModel = Depends(get_current_user),
     session: Session = Depends(get_db_session),
 ):
     service = TenantService(session)
     return service.suspend_tenant(
         tenant_id=tenant_id,
-        actor_user_id=payload.actor_user_id,
+        actor_user_id=current_user.user_id,
     )
 
 
 @router.post("/{tenant_id}/reactivate", response_model=TenantResponse)
 def reactivate_tenant(
     tenant_id: str,
-    payload: TenantActionRequest,
+    current_user: UserModel = Depends(get_current_user),
     session: Session = Depends(get_db_session),
 ):
     service = TenantService(session)
     return service.reactivate_tenant(
         tenant_id=tenant_id,
-        actor_user_id=payload.actor_user_id,
+        actor_user_id=current_user.user_id,
     )

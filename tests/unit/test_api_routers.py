@@ -6,6 +6,7 @@ from app.infrastructure.db.models import Base
 from app.infrastructure.db.models.tenant_model import TenantModel
 from app.infrastructure.db.models.user_model import UserModel
 from app.main import app
+from app.security import hash_password
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -25,11 +26,16 @@ def override_get_db_session() -> Generator[Session, None, None]:
         yield session
 
 
-app.dependency_overrides[get_db_session] = override_get_db_session
+def use_router_test_db() -> None:
+    app.dependency_overrides[get_db_session] = override_get_db_session
+
+
 client = TestClient(app)
 
 
 def seed_router_data() -> None:
+    use_router_test_db()
+
     with Session(engine) as session:
         existing = session.get(TenantModel, "tenant_router")
         if existing is not None:
@@ -50,7 +56,7 @@ def seed_router_data() -> None:
                 tenant_id="tenant_router",
                 email="router-admin@example.com",
                 full_name="Router Admin",
-                hashed_password="not-real",
+                hashed_password=hash_password("password123"),
                 role=UserRole.TENANT_ADMIN,
                 is_active=True,
             )
@@ -58,14 +64,50 @@ def seed_router_data() -> None:
         session.commit()
 
 
-def test_create_customer_route() -> None:
+def auth_headers() -> dict[str, str]:
     seed_router_data()
+    use_router_test_db()
+
+    response = client.post(
+        "/auth/login",
+        json={
+            "email": "router-admin@example.com",
+            "password": "password123",
+        },
+    )
+
+    assert response.status_code == 200, response.json()
+
+    token = response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
+
+
+def test_create_customer_route_requires_auth() -> None:
+    seed_router_data()
+    use_router_test_db()
 
     response = client.post(
         "/customers",
         json={
             "tenant_id": "tenant_router",
-            "actor_user_id": "user_router_admin",
+            "company_name": "Router Customer",
+            "contact_name": "Hussein",
+            "contact_email": "hussein@example.com",
+            "tags": ["demo"],
+        },
+    )
+
+    assert response.status_code == 401
+
+
+def test_create_customer_route() -> None:
+    use_router_test_db()
+
+    response = client.post(
+        "/customers",
+        headers=auth_headers(),
+        json={
+            "tenant_id": "tenant_router",
             "company_name": "Router Customer",
             "contact_name": "Hussein",
             "contact_email": "hussein@example.com",
@@ -80,13 +122,13 @@ def test_create_customer_route() -> None:
 
 
 def test_create_invoice_route() -> None:
-    seed_router_data()
+    use_router_test_db()
 
     response = client.post(
         "/invoices",
+        headers=auth_headers(),
         json={
             "tenant_id": "tenant_router",
-            "actor_user_id": "user_router_admin",
             "file_name": "invoice.pdf",
             "storage_key": "tenant_router/invoices/invoice.pdf",
         },

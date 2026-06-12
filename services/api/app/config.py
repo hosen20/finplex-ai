@@ -12,7 +12,14 @@ class Settings(BaseSettings):
     environment: str = "local"
     log_level: str = "INFO"
 
-    database_url: str = "postgresql+psycopg://finplex:finplex_password@localhost:5432/finplex"
+    auth_secret_key: str = "change-me-local-development-secret"
+    access_token_expire_minutes: int = 120
+    jwt_algorithm: str = "HS256"
+
+    database_url: str = (
+        "postgresql+psycopg://finplex:finplex_password"
+        "@localhost:5432/finplex"
+    )
     redis_url: str = "redis://localhost:6379/0"
 
     kafka_bootstrap_servers: str = "localhost:29092"
