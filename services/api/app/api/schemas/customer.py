@@ -5,7 +5,6 @@ from pydantic import BaseModel, ConfigDict
 
 class CustomerCreateRequest(BaseModel):
     tenant_id: str
-    actor_user_id: str
     company_name: str
     contact_name: str
     contact_email: str

@@ -7,7 +7,6 @@ from pydantic import BaseModel, ConfigDict
 
 class InvoiceCreateRequest(BaseModel):
     tenant_id: str
-    actor_user_id: str
     file_name: str
     storage_key: str
     customer_id: str | None = None

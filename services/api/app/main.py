@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.error_handlers import register_error_handlers
-from app.api.routers import customers, health, invoices, reviews, tenants
+from app.api.routers import auth, customers, health, invoices, reviews, tenants, users
 from app.config import settings
 
 app = FastAPI(
@@ -25,6 +25,8 @@ app.add_middleware(
 register_error_handlers(app)
 
 app.include_router(health.router, prefix="/health", tags=["health"])
+app.include_router(auth.router)
+app.include_router(users.router)
 app.include_router(tenants.router)
 app.include_router(customers.router)
 app.include_router(invoices.router)
