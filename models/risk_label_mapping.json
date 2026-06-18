@@ -1,0 +1,9 @@
+{
+  "labels": [
+    "low",
+    "medium",
+    "high",
+    "critical"
+  ],
+  "target_column": "risk_label"
+}

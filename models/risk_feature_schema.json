@@ -1,0 +1,38 @@
+{
+  "feature_columns": [
+    "amount_due",
+    "payment_terms_days",
+    "paperless_bill",
+    "country_code",
+    "previous_invoice_count",
+    "previous_late_payments",
+    "previous_disputed_count",
+    "previous_total_amount",
+    "previous_average_invoice_amount",
+    "previous_average_days_late",
+    "previous_max_days_late",
+    "previous_on_time_payment_rate",
+    "previous_dispute_rate",
+    "previous_crm_negative_signal_score",
+    "relationship_age_days"
+  ],
+  "numeric_features": [
+    "amount_due",
+    "payment_terms_days",
+    "paperless_bill",
+    "previous_invoice_count",
+    "previous_late_payments",
+    "previous_disputed_count",
+    "previous_total_amount",
+    "previous_average_invoice_amount",
+    "previous_average_days_late",
+    "previous_max_days_late",
+    "previous_on_time_payment_rate",
+    "previous_dispute_rate",
+    "previous_crm_negative_signal_score",
+    "relationship_age_days"
+  ],
+  "categorical_features": [
+    "country_code"
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "notebook": "02_late_payment_risk_model",
+  "created_at": "2026-06-18T15:42:08.919813+00:00",
+  "training_dataset": "/content/data/seed/risk_training_dataset.csv",
+  "model_name": "logistic_regression",
+  "target": "risk_label",
+  "labels": [
+    "low",
+    "medium",
+    "high",
+    "critical"
+  ],
+  "feature_columns": [
+    "amount_due",
+    "payment_terms_days",
+    "paperless_bill",
+    "country_code",
+    "previous_invoice_count",
+    "previous_late_payments",
+    "previous_disputed_count",
+    "previous_total_amount",
+    "previous_average_invoice_amount",
+    "previous_average_days_late",
+    "previous_max_days_late",
+    "previous_on_time_payment_rate",
+    "previous_dispute_rate",
+    "previous_crm_negative_signal_score",
+    "relationship_age_days"
+  ],
+  "metrics": {
+    "accuracy": 0.6919831223628692,
+    "macro_f1": 0.5761854502639819,
+    "weighted_f1": 0.7095738256345592
+  },
+  "all_model_results": [
+    {
+      "model_name": "logistic_regression",
+      "accuracy": 0.6919831223628692,
+      "macro_f1": 0.5761854502639819,
+      "weighted_f1": 0.7095738256345592,
+      "comet_url": "https://www.comet.com/hussein-shiri/finplex-ai-risk-model/1c9f8ba9b7df4d07853eaf5b0f7aacfd"
+    },
+    {
+      "model_name": "random_forest",
+      "accuracy": 0.7236286919831224,
+      "macro_f1": 0.565574435989085,
+      "weighted_f1": 0.7290752868765328,
+      "comet_url": "https://www.comet.com/hussein-shiri/finplex-ai-risk-model/c12112a0afd1488d9c33013a9b485fa6"
+    },
+    {
+      "model_name": "gradient_boosting",
+      "accuracy": 0.7362869198312236,
+      "macro_f1": 0.4735906546528021,
+      "weighted_f1": 0.7130070600138344,
+      "comet_url": "https://www.comet.com/hussein-shiri/finplex-ai-risk-model/f0bf2c86749645d59d5d88b9ce1ab910"
+    }
+  ],
+  "confusion_matrix": {
+    "predicted_low": {
+      "actual_low": 242,
+      "actual_medium": 29,
+      "actual_high": 1,
+      "actual_critical": 0
+    },
+    "predicted_medium": {
+      "actual_low": 46,
+      "actual_medium": 63,
+      "actual_high": 10,
+      "actual_critical": 0
+    },
+    "predicted_high": {
+      "actual_low": 18,
+      "actual_medium": 42,
+      "actual_high": 23,
+      "actual_critical": 0
+    },
+    "predicted_critical": {
+      "actual_low": 0,
+      "actual_medium": 0,
+      "actual_high": 0,
+      "actual_critical": 0
+    }
+  },
+  "top_features": [
+    {
+      "feature": "country_code_391",
+      "importance": 0.4035123095467304
+    },
+    {
+      "feature": "previous_on_time_payment_rate",
+      "importance": 0.34689926723263026
+    },
+    {
+      "feature": "previous_average_days_late",
+      "importance": 0.2466666894558691
+    },
+    {
+      "feature": "amount_due",
+      "importance": 0.21913337031740107
+    },
+    {
+      "feature": "previous_invoice_count",
+      "importance": 0.20205774541988605
+    },
+    {
+      "feature": "previous_max_days_late",
+      "importance": 0.1840051862815624
+    },
+    {
+      "feature": "previous_crm_negative_signal_score",
+      "importance": 0.1676817969927861
+    },
+    {
+      "feature": "country_code_818",
+      "importance": 0.1631696999578154
+    },
+    {
+      "feature": "previous_late_payments",
+      "importance": 0.1473251394548357
+    },
+    {
+      "feature": "country_code_897",
+      "importance": 0.12546702533707463
+    },
+    {
+      "feature": "previous_total_amount",
+      "importance": 0.11011078966238276
+    },
+    {
+      "feature": "relationship_age_days",
+      "importance": 0.09068848275765722
+    },
+    {
+      "feature": "country_code_406",
+      "importance": 0.08964017551628349
+    },
+    {
+      "feature": "previous_average_invoice_amount",
+      "importance": 0.08703148083434935
+    },
+    {
+      "feature": "previous_disputed_count",
+      "importance": 0.06526937355941449
+    }
+  ],
+  "artifacts": {
+    "model_path": "/content/models/risk_model.joblib",
+    "label_mapping_path": "/content/models/risk_label_mapping.json",
+    "metadata_path": "/content/models/risk_model_metadata.json",
+    "feature_schema_path": "/content/models/risk_feature_schema.json",
+    "confusion_matrix_path": "/content/artifacts/risk_model/risk_model_confusion_matrix.png",
+    "feature_importance_path": "/content/artifacts/risk_model/risk_model_feature_importance.csv",
+    "new_invoice_predictions_path": "/content/artifacts/risk_model/new_uploaded_invoice_risk_predictions.csv"
+  },
+  "online_tracking": {
+    "tool": "Comet ML",
+    "enabled": true,
+    "project_name": "finplex-ai-risk-model"
+  }
+}

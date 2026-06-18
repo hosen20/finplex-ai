@@ -1,0 +1,11 @@
+field,accuracy,matched,total
+invoice_number,1.0,40,40
+customer_id,0.975,39,40
+external_customer_id,0.975,39,40
+customer_name,0.975,39,40
+invoice_date,1.0,40,40
+due_date,1.0,40,40
+payment_terms_days,1.0,40,40
+amount_due,1.0,40,40
+currency,1.0,40,40
+country_code,1.0,40,40
