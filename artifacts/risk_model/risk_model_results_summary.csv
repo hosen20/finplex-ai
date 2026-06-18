@@ -1,0 +1,4 @@
+model_name,accuracy,macro_f1,weighted_f1,comet_url
+logistic_regression,0.6919831223628692,0.5761854502639819,0.7095738256345592,https://www.comet.com/hussein-shiri/finplex-ai-risk-model/1c9f8ba9b7df4d07853eaf5b0f7aacfd
+random_forest,0.7236286919831224,0.565574435989085,0.7290752868765328,https://www.comet.com/hussein-shiri/finplex-ai-risk-model/c12112a0afd1488d9c33013a9b485fa6
+gradient_boosting,0.7362869198312236,0.4735906546528021,0.7130070600138344,https://www.comet.com/hussein-shiri/finplex-ai-risk-model/f0bf2c86749645d59d5d88b9ce1ab910

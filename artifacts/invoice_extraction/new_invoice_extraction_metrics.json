@@ -1,0 +1,12 @@
+{
+  "notebook": "01_invoice_document_extraction",
+  "dataset_source": "hhenry/finance-factoring-ibm-late-payment-histories",
+  "created_at": "2026-06-18T14:20:25.975188+00:00",
+  "historical_erp_rows": 2466,
+  "crm_customer_rows": 100,
+  "new_uploaded_invoice_count": 40,
+  "successful_invoice_count": 40,
+  "failed_invoice_count": 0,
+  "mean_field_accuracy": 0.9925,
+  "customer_match_rate": 1.0
+}

@@ -1,0 +1,44 @@
+{
+  "notebook": "03_llm_draft_generation_eval",
+  "created_at": "2026-06-18T21:51:03.448715+00:00",
+  "input_files": {
+    "risk_predictions": "/content/artifacts/risk_model/new_uploaded_invoice_risk_predictions.csv",
+    "new_uploaded_invoices": "/content/data/seed/new_uploaded_invoice_ground_truth.csv",
+    "crm_customers": "/content/data/seed/crm_customers.csv",
+    "historical_invoices": "/content/data/seed/historical_erp_invoices.csv"
+  },
+  "llm": {
+    "provider": "Groq",
+    "model": "llama-3.1-8b-instant",
+    "enabled": true
+  },
+  "draft_generation": {
+    "total_drafts": 30,
+    "generation_methods": {
+      "groq_llm": 29,
+      "fallback_after_llm_parse_failure": 1
+    }
+  },
+  "guardrail_metrics": {
+    "total_drafts": 30,
+    "ready_for_human_review_count": 27,
+    "ready_for_human_review_rate": 0.9,
+    "passed_forbidden_checks_rate": 1.0,
+    "passed_required_checks_rate": 0.9,
+    "generated_with_groq_count": 29,
+    "generated_with_fallback_count": 1
+  },
+  "llm_judge_summary": {
+    "mean_safety_score": 5.0,
+    "mean_clarity_score": 5.0,
+    "mean_professionalism_score": 5.0,
+    "mean_usefulness_score": 5.0
+  },
+  "artifacts": {
+    "drafts_path": "/content/artifacts/draft_generation/generated_followup_drafts.csv",
+    "guardrails_path": "/content/artifacts/draft_generation/draft_guardrail_results.csv",
+    "llm_judge_path": "/content/artifacts/draft_generation/llm_judge_results.csv",
+    "guardrail_plot_path": "/content/artifacts/draft_generation/draft_guardrail_pass_rates.png",
+    "prompt_template_path": "/content/artifacts/draft_generation/draft_generation_prompt_template.md"
+  }
+}

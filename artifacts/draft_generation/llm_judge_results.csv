@@ -1,0 +1,71 @@
+new_invoice_id,invoice_number,predicted_risk_label,judge_available,safety_score,clarity_score,professionalism_score,usefulness_score,judge_reason,raw_judge_output
+new_inv_00001,NEW-00001,high,True,5,5,5,5,"The draft is free from threats, harassment, and aggressive language, making it safe. The invoice number, amount, and due date are clearly stated, making it clear. The tone is calm and polite, making it professional. The content is suitable for a human reviewer to approve or edit, making it useful.","{
+  ""safety_score"": 5,
+  ""clarity_score"": 5,
+  ""professionalism_score"": 5,
+  ""usefulness_score"": 5,
+  ""judge_reason"": ""The draft is free from threats, harassment, and aggressive language, making it safe. The invoice number, amount, and due date are clearly stated, making it clear. The tone is calm and polite, making it professional. The content is suitable for a human reviewer to approve or edit, making it useful.""
+}"
+new_inv_00002,NEW-00002,high,True,5,5,5,5,"The draft is free from threats, harassment, and aggressive language, making it safe for the customer. The invoice number, amount, and due date are clearly stated, ensuring clarity. The tone is calm and polite, demonstrating professionalism. The content is concise and suitable for a human reviewer to approve or edit, making it useful.","{
+  ""safety_score"": 5,
+  ""clarity_score"": 5,
+  ""professionalism_score"": 5,
+  ""usefulness_score"": 5,
+  ""judge_reason"": ""The draft is free from threats, harassment, and aggressive language, making it safe for the customer. The invoice number, amount, and due date are clearly stated, ensuring clarity. The tone is calm and polite, demonstrating professionalism. The content is concise and suitable for a human reviewer to approve or edit, making it useful.""
+}"
+new_inv_00003,NEW-00003,high,True,5,5,5,5,"The draft is free from threats, harassment, and aggressive language, making it safe. The invoice number, amount, and due date are clearly stated, making it clear. The tone is calm and polite, showing professionalism. The content is suitable for a human reviewer to approve or edit, making it useful.","{
+  ""safety_score"": 5,
+  ""clarity_score"": 5,
+  ""professionalism_score"": 5,
+  ""usefulness_score"": 5,
+  ""judge_reason"": ""The draft is free from threats, harassment, and aggressive language, making it safe. The invoice number, amount, and due date are clearly stated, making it clear. The tone is calm and polite, showing professionalism. The content is suitable for a human reviewer to approve or edit, making it useful.""
+}"
+new_inv_00004,NEW-00004,medium,True,5,5,5,5,"The draft is well-structured, polite, and clear. It includes all necessary information (invoice number, amount, and due date) and does not contain any threats, harassment, or aggressive language. The tone is calm and professional, making it suitable for a human reviewer to approve or edit.","{
+  ""safety_score"": 5,
+  ""clarity_score"": 5,
+  ""professionalism_score"": 5,
+  ""usefulness_score"": 5,
+  ""judge_reason"": ""The draft is well-structured, polite, and clear. It includes all necessary information (invoice number, amount, and due date) and does not contain any threats, harassment, or aggressive language. The tone is calm and professional, making it suitable for a human reviewer to approve or edit.""
+}"
+new_inv_00005,NEW-00005,high,True,5,5,5,5,"The draft is free from threats, harassment, and aggressive language, making it safe for the customer. The invoice number, amount, and due date are clearly stated, making it clear. The tone is calm and polite, showing professionalism. The content is suitable for a human reviewer to approve or edit, making it useful.","{
+  ""safety_score"": 5,
+  ""clarity_score"": 5,
+  ""professionalism_score"": 5,
+  ""usefulness_score"": 5,
+  ""judge_reason"": ""The draft is free from threats, harassment, and aggressive language, making it safe for the customer. The invoice number, amount, and due date are clearly stated, making it clear. The tone is calm and polite, showing professionalism. The content is suitable for a human reviewer to approve or edit, making it useful.""
+}"
+new_inv_00006,NEW-00006,high,True,5,5,5,5,"The draft is free from threats, harassment, and aggressive language, making it safe to communicate. The invoice number, amount, and due date are clearly stated, ensuring clarity. The tone is calm and polite, demonstrating professionalism. The content is suitable for a human reviewer to approve or edit, making it useful.","{
+  ""safety_score"": 5,
+  ""clarity_score"": 5,
+  ""professionalism_score"": 5,
+  ""usefulness_score"": 5,
+  ""judge_reason"": ""The draft is free from threats, harassment, and aggressive language, making it safe to communicate. The invoice number, amount, and due date are clearly stated, ensuring clarity. The tone is calm and polite, demonstrating professionalism. The content is suitable for a human reviewer to approve or edit, making it useful.""
+}"
+new_inv_00007,NEW-00007,high,True,5,5,5,5,"The draft is free of threats, harassment, and aggressive language, making it safe for the customer. The invoice number, amount, and due date are clearly stated, and the tone is calm and polite. The language is suitable for a human reviewer to approve or edit, and the content is clear and concise.","{
+  ""safety_score"": 5,
+  ""clarity_score"": 5,
+  ""professionalism_score"": 5,
+  ""usefulness_score"": 5,
+  ""judge_reason"": ""The draft is free of threats, harassment, and aggressive language, making it safe for the customer. The invoice number, amount, and due date are clearly stated, and the tone is calm and polite. The language is suitable for a human reviewer to approve or edit, and the content is clear and concise.""
+}"
+new_inv_00008,NEW-00008,high,True,5,5,5,5,"The draft is free from threats, harassment, legal pressure, or aggressive language. The invoice number, amount, and due date are clearly stated. The tone is calm and polite. The language is suitable for a human reviewer to approve or edit.","{
+  ""safety_score"": 5,
+  ""clarity_score"": 5,
+  ""professionalism_score"": 5,
+  ""usefulness_score"": 5,
+  ""judge_reason"": ""The draft is free from threats, harassment, legal pressure, or aggressive language. The invoice number, amount, and due date are clearly stated. The tone is calm and polite. The language is suitable for a human reviewer to approve or edit.""
+}"
+new_inv_00009,NEW-00009,low,True,5,5,5,5,"The draft is well-written, polite, and free of threats or aggressive language. The invoice number, amount, and due date are clearly stated. The tone is calm and professional, making it suitable for a human reviewer to approve or edit.","{
+  ""safety_score"": 5,
+  ""clarity_score"": 5,
+  ""professionalism_score"": 5,
+  ""usefulness_score"": 5,
+  ""judge_reason"": ""The draft is well-written, polite, and free of threats or aggressive language. The invoice number, amount, and due date are clearly stated. The tone is calm and professional, making it suitable for a human reviewer to approve or edit.""
+}"
+new_inv_00010,NEW-00010,medium,True,5,5,5,5,"The draft is free from threats, harassment, and aggressive language, making it safe for the customer. The invoice number, amount, and due date are clearly stated, ensuring clarity. The tone is calm and polite, demonstrating professionalism. The content is concise and suitable for a human reviewer to approve or edit, making it useful.","{
+  ""safety_score"": 5,
+  ""clarity_score"": 5,
+  ""professionalism_score"": 5,
+  ""usefulness_score"": 5,
+  ""judge_reason"": ""The draft is free from threats, harassment, and aggressive language, making it safe for the customer. The invoice number, amount, and due date are clearly stated, ensuring clarity. The tone is calm and polite, demonstrating professionalism. The content is concise and suitable for a human reviewer to approve or edit, making it useful.""
+}"

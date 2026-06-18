@@ -1,0 +1,534 @@
+new_invoice_id,invoice_number,finplex_customer_id,customer_name,amount_due,currency,due_date,predicted_risk_label,subject,body,tone,recommended_action,risk_reason_summary,human_review_notes,generation_method,raw_llm_output,llm_error
+new_inv_00001,NEW-00001,cust_0688-XNJRO,Customer 0688-XNJRO,50.0,USD,2014-03-02,high,Follow-up on Outstanding Invoice NEW-00001,"Dear Customer 0688-XNJRO,
+
+This is a follow-up on your outstanding invoice NEW-00001, dated 2014-01-01, with an amount due of USD 50.00. The due date for this invoice was 2014-03-02.
+
+If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to assist you.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Customer has a history of late payments and a low on-time payment rate.,Please review the customer's payment history and adjust the tone and content as needed before sending the final email.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00001"",
+  ""body"": ""Dear Customer 0688-XNJRO,\n\nThis is a follow-up on your outstanding invoice NEW-00001, dated 2014-01-01, with an amount due of USD 50.00. The due date for this invoice was 2014-03-02.\n\nIf you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to assist you.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone and content as needed before sending the final email.""
+}",
+new_inv_00002,NEW-00002,cust_8690-EEBEO,Customer 8690-EEBEO,72.74,USD,2014-02-01,high,Follow-up on Outstanding Invoice NEW-00002,"Dear Customer 8690-EEBEO,
+
+We are writing to follow up on your outstanding invoice NEW-00002, which is currently due on 2014-02-01. The total amount due is USD 72.74. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Previous late payments and low on-time payment rate.,Please review and modify as necessary before sending to the customer.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00002"",
+  ""body"": ""Dear Customer 8690-EEBEO,\n\nWe are writing to follow up on your outstanding invoice NEW-00002, which is currently due on 2014-02-01. The total amount due is USD 72.74. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Previous late payments and low on-time payment rate."",
+  ""human_review_notes"": ""Please review and modify as necessary before sending to the customer.""
+}",
+new_inv_00003,NEW-00003,cust_8102-ABPKQ,Customer 8102-ABPKQ,55.65,USD,2014-02-02,high,Follow-up on Outstanding Invoice NEW-00003,"Dear Customer 8102-ABPKQ,
+
+We are writing to follow up on your outstanding invoice NEW-00003, which is due on 2014-02-02. The total amount due is USD 55.65. We understand that unforeseen circumstances may have caused delays in payment. If there are any questions or issues regarding this invoice, please do not hesitate to reply to this email. We are here to assist you.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Previous late payments and low on-time payment rate.,Please review the tone and content to ensure it aligns with your company's communication standards. Verify the due date and amount due before sending the email.,groq_llm,"```json
+{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00003"",
+  ""body"": ""Dear Customer 8102-ABPKQ,\n\nWe are writing to follow up on your outstanding invoice NEW-00003, which is due on 2014-02-02. The total amount due is USD 55.65. We understand that unforeseen circumstances may have caused delays in payment. If there are any questions or issues regarding this invoice, please do not hesitate to reply to this email. We are here to assist you.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Previous late payments and low on-time payment rate."",
+  ""human_review_notes"": ""Please review the tone and content to ensure it aligns with your company's communication standards. Verify the due date and amount due before sending the email.""
+}
+```",
+new_inv_00004,NEW-00004,cust_6708-DPYTF,Customer 6708-DPYTF,62.9,USD,2014-02-18,medium,Payment Follow-up for Invoice NEW-00004,"Dear Customer 6708-DPYTF,
+
+We hope this message finds you well. We are writing to follow up on your outstanding balance for invoice NEW-00004, which is currently due on 2014-02-18. The amount due is USD 62.90. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this message.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send the follow-up message after human review and approval.,"Customer has a history of late payments, but no specific reason for this particular invoice has been identified.",Please review the customer's payment history and adjust the message accordingly if necessary.,groq_llm,"{
+  ""subject"": ""Payment Follow-up for Invoice NEW-00004"",
+  ""body"": ""Dear Customer 6708-DPYTF,\n\nWe hope this message finds you well. We are writing to follow up on your outstanding balance for invoice NEW-00004, which is currently due on 2014-02-18. The amount due is USD 62.90. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this message.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send the follow-up message after human review and approval."",
+  ""risk_reason_summary"": ""Customer has a history of late payments, but no specific reason for this particular invoice has been identified."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the message accordingly if necessary.""
+}",
+new_inv_00005,NEW-00005,cust_4460-ZXNDN,Customer 4460-ZXNDN,77.88,USD,2014-02-19,high,Follow-up on Outstanding Invoice NEW-00005,"Dear Customer 4460-ZXNDN,
+
+We are writing to follow up on your outstanding invoice NEW-00005, which is due on 2014-02-19. The total amount due is USD 77.88. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Previous late payments and low on-time payment rate.,Please review the tone and content for accuracy and adjust as necessary before sending to the customer.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00005"",
+  ""body"": ""Dear Customer 4460-ZXNDN,\n\nWe are writing to follow up on your outstanding invoice NEW-00005, which is due on 2014-02-19. The total amount due is USD 77.88. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Previous late payments and low on-time payment rate."",
+  ""human_review_notes"": ""Please review the tone and content for accuracy and adjust as necessary before sending to the customer.""
+}",
+new_inv_00006,NEW-00006,cust_9883-SDWFS,Customer 9883-SDWFS,50.0,USD,2014-03-07,high,Follow-up on Outstanding Invoice NEW-00006,"Dear Customer 9883-SDWFS,
+
+This is a friendly follow-up regarding your outstanding invoice NEW-00006, dated 2014-01-06, with an amount due of USD 50.00. The due date for this invoice was 2014-03-07.
+
+If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to help and want to ensure that everything is settled to your satisfaction.
+
+Thank you for your prompt attention to this matter.
+
+Best regards, [Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Customer has a history of late payments and a low on-time payment rate.,Please review the customer's payment history and adjust the tone and content as needed before sending the final email.,groq_llm,"```json
+{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00006"",
+  ""body"": ""Dear Customer 9883-SDWFS,\n\nThis is a friendly follow-up regarding your outstanding invoice NEW-00006, dated 2014-01-06, with an amount due of USD 50.00. The due date for this invoice was 2014-03-07.\n\nIf you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to help and want to ensure that everything is settled to your satisfaction.\n\nThank you for your prompt attention to this matter.\n\nBest regards, [Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone and content as needed before sending the final email.""
+}
+```",
+new_inv_00007,NEW-00007,cust_3448-OWJOT,Customer 3448-OWJOT,88.75,USD,2014-02-06,high,Follow-up on Outstanding Invoice NEW-00007,"Dear Customer 3448-OWJOT,
+
+This is a friendly follow-up regarding your outstanding invoice NEW-00007, which is due on 2014-02-06. The amount due is USD 88.75. We understand that unforeseen circumstances may have caused delays, and we want to ensure that we can resolve this matter amicably.
+
+If you have any questions or concerns about this invoice, please do not hesitate to reply. We are here to help and want to ensure that you are satisfied with our services.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Customer has a history of late payments and a low on-time payment rate.,Please review the customer's payment history and adjust the tone accordingly. Consider adding a specific deadline for payment if necessary.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00007"",
+  ""body"": ""Dear Customer 3448-OWJOT,\n\nThis is a friendly follow-up regarding your outstanding invoice NEW-00007, which is due on 2014-02-06. The amount due is USD 88.75. We understand that unforeseen circumstances may have caused delays, and we want to ensure that we can resolve this matter amicably.\n\nIf you have any questions or concerns about this invoice, please do not hesitate to reply. We are here to help and want to ensure that you are satisfied with our services.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone accordingly. Consider adding a specific deadline for payment if necessary.""
+}",
+new_inv_00008,NEW-00008,cust_7228-LEPPM,Customer 7228-LEPPM,50.0,USD,2014-02-07,high,Follow-up on Outstanding Invoice NEW-00008,"Dear Customer 7228-LEPPM,
+
+This is a friendly follow-up regarding your outstanding invoice NEW-00008, dated 2014-01-08, with an amount due of USD 50.00. The due date for this invoice was 2014-02-07. 
+
+If you have any questions or concerns regarding this invoice, please do not hesitate to contact us. We are here to help and want to ensure that everything is resolved to your satisfaction.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Customer has a history of late payments and a low on-time payment rate.,Please review the customer's payment history and adjust the tone accordingly. Ensure that the customer is not being pressured or threatened in any way.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00008"",
+  ""body"": ""Dear Customer 7228-LEPPM,\n\nThis is a friendly follow-up regarding your outstanding invoice NEW-00008, dated 2014-01-08, with an amount due of USD 50.00. The due date for this invoice was 2014-02-07. \n\nIf you have any questions or concerns regarding this invoice, please do not hesitate to contact us. We are here to help and want to ensure that everything is resolved to your satisfaction.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone accordingly. Ensure that the customer is not being pressured or threatened in any way.""
+}",
+new_inv_00009,NEW-00009,cust_8887-NCUZC,Customer 8887-NCUZC,50.0,USD,2014-02-08,low,Friendly Reminder: Outstanding Balance for Invoice NEW-00009,"Dear Customer 8887-NCUZC,
+
+We hope this message finds you well. We are writing to follow up on your outstanding balance for invoice NEW-00009, which is currently due on 2014-02-08. The amount due is USD 50.00. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to assist you.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send a friendly reminder for human review.,Customer has a history of 22 late payments with an average of 5.09 days late and a 37.1% on-time payment rate.,Please review the customer's payment history and adjust the tone and content as necessary before sending the reminder.,groq_llm,"```json
+{
+  ""subject"": ""Friendly Reminder: Outstanding Balance for Invoice NEW-00009"",
+  ""body"": ""Dear Customer 8887-NCUZC,\n\nWe hope this message finds you well. We are writing to follow up on your outstanding balance for invoice NEW-00009, which is currently due on 2014-02-08. The amount due is USD 50.00. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to assist you.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send a friendly reminder for human review."",
+  ""risk_reason_summary"": ""Customer has a history of 22 late payments with an average of 5.09 days late and a 37.1% on-time payment rate."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone and content as necessary before sending the reminder.""
+}
+```",
+new_inv_00010,NEW-00010,cust_5573-KSOIA,Customer 5573-KSOIA,83.13,USD,2014-02-09,medium,Payment Status Follow-up for Invoice NEW-00010,"Dear Customer 5573-KSOIA,
+
+This is a friendly follow-up regarding your outstanding balance for invoice NEW-00010, which was due on 2014-02-09. The amount due is USD 83.13. If you have any questions or concerns about this invoice, please do not hesitate to reply to this email.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send the follow-up email after human review and approval.,Customer has a history of late payments and a low on-time payment rate.,Please review the customer's account history and adjust the tone or content as needed before sending the email.,groq_llm,"```json
+{
+  ""subject"": ""Payment Status Follow-up for Invoice NEW-00010"",
+  ""body"": ""Dear Customer 5573-KSOIA,\n\nThis is a friendly follow-up regarding your outstanding balance for invoice NEW-00010, which was due on 2014-02-09. The amount due is USD 83.13. If you have any questions or concerns about this invoice, please do not hesitate to reply to this email.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send the follow-up email after human review and approval."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Please review the customer's account history and adjust the tone or content as needed before sending the email.""
+}
+```",
+new_inv_00011,NEW-00011,cust_7758-WKLVM,Customer 7758-WKLVM,69.68,USD,2014-01-26,high,Follow-up on Outstanding Invoice NEW-00011,"Dear Customer 7758-WKLVM,
+
+This is a friendly follow-up regarding your outstanding invoice NEW-00011, which was issued on January 11, 2014. The total amount due is USD 69.68. The due date for this invoice was January 26, 2014.
+
+If you have any questions or concerns about this invoice, please do not hesitate to contact us. We are here to help and want to ensure that we resolve any issues promptly.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Customer has a history of late payments and a low on-time payment rate.,Please review the tone and content to ensure it aligns with our company's communication standards. Verify the accuracy of the invoice details and due date.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00011"",
+  ""body"": ""Dear Customer 7758-WKLVM,\n\nThis is a friendly follow-up regarding your outstanding invoice NEW-00011, which was issued on January 11, 2014. The total amount due is USD 69.68. The due date for this invoice was January 26, 2014.\n\nIf you have any questions or concerns about this invoice, please do not hesitate to contact us. We are here to help and want to ensure that we resolve any issues promptly.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Please review the tone and content to ensure it aligns with our company's communication standards. Verify the accuracy of the invoice details and due date.""
+}",
+new_inv_00012,NEW-00012,cust_5613-UHVMG,Customer 5613-UHVMG,57.11,USD,2014-02-11,high,Follow-up on Outstanding Invoice NEW-00012,"Dear Customer 5613-UHVMG,
+
+This is a follow-up on your outstanding invoice NEW-00012, which is due on 2014-02-11. The amount due is USD 57.11. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Previous late payments and low on-time payment rate.,Review the customer's payment history and adjust the tone accordingly. Consider adding a phone number or email address for the customer to contact for further assistance.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00012"",
+  ""body"": ""Dear Customer 5613-UHVMG,\n\nThis is a follow-up on your outstanding invoice NEW-00012, which is due on 2014-02-11. The amount due is USD 57.11. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Previous late payments and low on-time payment rate."",
+  ""human_review_notes"": ""Review the customer's payment history and adjust the tone accordingly. Consider adding a phone number or email address for the customer to contact for further assistance.""
+}",
+new_inv_00013,NEW-00013,cust_0783-PEPYR,Customer 0783-PEPYR,70.36,USD,2014-02-27,high,Follow-up on Outstanding Invoice NEW-00013,"Dear Customer 0783-PEPYR,
+
+We are writing to follow up on your outstanding invoice NEW-00013, which is due on 2014-02-27. The total amount due is USD 70.36. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Previous late payments and low on-time payment rate.,Please review the tone and content to ensure it aligns with your company's communication standards.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00013"",
+  ""body"": ""Dear Customer 0783-PEPYR,\n\nWe are writing to follow up on your outstanding invoice NEW-00013, which is due on 2014-02-27. The total amount due is USD 70.36. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Previous late payments and low on-time payment rate."",
+  ""human_review_notes"": ""Please review the tone and content to ensure it aligns with your company's communication standards.""
+}",
+new_inv_00014,NEW-00014,cust_1604-LIFKX,Customer 1604-LIFKX,62.12,USD,2014-02-13,high,Follow-up on Outstanding Invoice NEW-00014,"Dear Customer 1604-LIFKX,
+
+This is a friendly follow-up on your outstanding invoice NEW-00014, which is due on 2014-02-13. The total amount due is USD 62.12. If you have any questions or concerns regarding this invoice, please do not hesitate to reach out to us.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Previous late payments and low on-time payment rate may indicate potential issues with payment timing.,Review the customer's payment history and adjust the tone and content accordingly. Ensure that the message is clear and concise.,groq_llm,"```json
+{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00014"",
+  ""body"": ""Dear Customer 1604-LIFKX,\n\nThis is a friendly follow-up on your outstanding invoice NEW-00014, which is due on 2014-02-13. The total amount due is USD 62.12. If you have any questions or concerns regarding this invoice, please do not hesitate to reach out to us.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Previous late payments and low on-time payment rate may indicate potential issues with payment timing."",
+  ""human_review_notes"": ""Review the customer's payment history and adjust the tone and content accordingly. Ensure that the message is clear and concise.""
+}
+```",
+new_inv_00015,NEW-00015,cust_3831-FXWYK,Customer 3831-FXWYK,78.53,USD,2014-01-30,medium,Follow-up on invoice NEW-00015,"Dear Customer 3831-FXWYK,
+
+This is a polite follow-up regarding invoice NEW-00015 for USD 78.53, due on 2014-01-30. Please let us know if payment has already been scheduled or if there is anything we should review.
+
+Thank you for your attention.",polite and professional,Send a polite payment-status follow-up for human review.,Draft generated using invoice details and historical customer behavior.,Review before sending. Do not send automatically.,fallback_after_llm_parse_failure,"```json
+{
+  ""subject"": ""Payment Follow-up for Invoice NEW-00015"",
+  ""body"": ""Dear Customer 3831-FXWYK,
+
+We are writing to follow up on your outstanding balance for invoice NEW-00015, which is due on January 30, 2014. The amount due is USD 78.53. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us.
+
+We appreciate your prompt attention to this matter and look forward to hearing from you.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send a polite payment-status follow-up for human review."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a medium predicted risk label."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone and content as needed before sending the follow-up email.""
+}
+```",
+new_inv_00016,NEW-00016,cust_9181-HEKGV,Customer 9181-HEKGV,87.31,USD,2014-02-15,high,Follow-up on Outstanding Invoice NEW-00016,"Dear Customer 9181-HEKGV,
+
+This is a friendly follow-up regarding your outstanding invoice NEW-00016. The amount due is USD 87.31, with a due date of 2014-02-15. If you have any questions or concerns about this invoice, please do not hesitate to reply to this email.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",polite and professional,Ask the customer to confirm payment timing and whether there are issues.,The customer has a history of late payments and a low on-time payment rate.,Please review the customer's payment history and adjust the tone accordingly. Ensure that the message is clear and concise.,groq_llm,"```json
+{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00016"",
+  ""body"": ""Dear Customer 9181-HEKGV,\n\nThis is a friendly follow-up regarding your outstanding invoice NEW-00016. The amount due is USD 87.31, with a due date of 2014-02-15. If you have any questions or concerns about this invoice, please do not hesitate to reply to this email.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""polite and professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""The customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone accordingly. Ensure that the message is clear and concise.""
+}
+```",
+new_inv_00017,NEW-00017,cust_9117-LYRCE,Customer 9117-LYRCE,50.0,USD,2014-03-18,medium,Payment Follow-up for Invoice NEW-00017,"Dear Customer 9117-LYRCE,
+
+We are writing to follow up on your outstanding balance for invoice NEW-00017, which is due on 2014-03-18. The amount due is USD 50.00. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us. We appreciate your prompt attention to this matter.
+
+Thank you for your cooperation.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send a polite payment-status follow-up for human review.,Previous late payments and on-time payment rate indicate a need for follow-up.,Please review the tone and content to ensure it aligns with company policies and procedures.,groq_llm,"{
+  ""subject"": ""Payment Follow-up for Invoice NEW-00017"",
+  ""body"": ""Dear Customer 9117-LYRCE,\n\nWe are writing to follow up on your outstanding balance for invoice NEW-00017, which is due on 2014-03-18. The amount due is USD 50.00. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us. We appreciate your prompt attention to this matter.\n\nThank you for your cooperation.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send a polite payment-status follow-up for human review."",
+  ""risk_reason_summary"": ""Previous late payments and on-time payment rate indicate a need for follow-up."",
+  ""human_review_notes"": ""Please review the tone and content to ensure it aligns with company policies and procedures.""
+}",
+new_inv_00018,NEW-00018,cust_1080-NDGAE,Customer 1080-NDGAE,113.65,USD,2014-03-04,low,Friendly Reminder: Overdue Invoice NEW-00018,"Dear Customer 1080-NDGAE,
+
+We hope this message finds you well. We wanted to follow up on your invoice NEW-00018, which is now overdue. The amount due is USD 113.65, with a due date of 2014-03-04. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to help and appreciate your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send a friendly reminder for human review.,"Customer has a history of late payments, but this is a low-risk account.",Please review the customer's payment history and adjust the tone accordingly. Consider adding a clear call-to-action for the customer to respond with any questions or concerns.,groq_llm,"{
+  ""subject"": ""Friendly Reminder: Overdue Invoice NEW-00018"",
+  ""body"": ""Dear Customer 1080-NDGAE,\n\nWe hope this message finds you well. We wanted to follow up on your invoice NEW-00018, which is now overdue. The amount due is USD 113.65, with a due date of 2014-03-04. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to help and appreciate your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send a friendly reminder for human review."",
+  ""risk_reason_summary"": ""Customer has a history of late payments, but this is a low-risk account."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone accordingly. Consider adding a clear call-to-action for the customer to respond with any questions or concerns.""
+}",
+new_inv_00019,NEW-00019,cust_9928-IJYBQ,Customer 9928-IJYBQ,55.24,USD,2014-02-03,medium,Payment Status Follow-up for Invoice NEW-00019,"Dear Customer 9928-IJYBQ,
+
+We hope this message finds you well. We are writing to follow up on the status of your invoice NEW-00019, which was issued on January 19, 2014. The total amount due is USD 55.24, and the due date was February 3, 2014.
+
+If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this message. We are here to assist you and resolve any issues promptly.
+
+Thank you for your attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send the follow-up email after human review and approval.,Previous late payments and low on-time payment rate.,Review the customer's payment history and adjust the follow-up tone accordingly. Consider adding a phone number or additional contact information for the customer's convenience.,groq_llm,"{
+  ""subject"": ""Payment Status Follow-up for Invoice NEW-00019"",
+  ""body"": ""Dear Customer 9928-IJYBQ,\n\nWe hope this message finds you well. We are writing to follow up on the status of your invoice NEW-00019, which was issued on January 19, 2014. The total amount due is USD 55.24, and the due date was February 3, 2014.\n\nIf you have any questions or concerns regarding this invoice, please do not hesitate to reply to this message. We are here to assist you and resolve any issues promptly.\n\nThank you for your attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send the follow-up email after human review and approval."",
+  ""risk_reason_summary"": ""Previous late payments and low on-time payment rate."",
+  ""human_review_notes"": ""Review the customer's payment history and adjust the follow-up tone accordingly. Consider adding a phone number or additional contact information for the customer's convenience.""
+}",
+new_inv_00020,NEW-00020,cust_7938-EVASK,Customer 7938-EVASK,80.99,USD,2014-02-19,medium,Payment Status Follow-up for Invoice NEW-00020,"Dear Customer 7938-EVASK,
+
+We hope this message finds you well. We are writing to follow up on the status of your invoice NEW-00020, which is due on 2014-02-19. The amount due is USD 80.99. If you have any questions or concerns about this invoice, please do not hesitate to reply to this email. We appreciate your prompt attention to this matter.
+
+Best regards, [Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send the follow-up email after human review and approval.,Customer has a history of late payments and a low on-time payment rate.,"Review the customer's payment history and adjust the tone and content of the email accordingly. Ensure that the email is clear, concise, and respectful.",groq_llm,"{
+  ""subject"": ""Payment Status Follow-up for Invoice NEW-00020"",
+  ""body"": ""Dear Customer 7938-EVASK,\n\nWe hope this message finds you well. We are writing to follow up on the status of your invoice NEW-00020, which is due on 2014-02-19. The amount due is USD 80.99. If you have any questions or concerns about this invoice, please do not hesitate to reply to this email. We appreciate your prompt attention to this matter.\n\nBest regards, [Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send the follow-up email after human review and approval."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Review the customer's payment history and adjust the tone and content of the email accordingly. Ensure that the email is clear, concise, and respectful.""
+}",
+new_inv_00021,NEW-00021,cust_9322-YCTQO,Customer 9322-YCTQO,76.27,USD,2014-02-20,medium,Payment Follow-up for Invoice NEW-00021,"Dear Customer 9322-YCTQO,
+
+This is a friendly follow-up regarding your outstanding balance for invoice NEW-00021. The amount due is USD 76.27, and the due date was February 20, 2014.
+
+If you have any questions or concerns about this invoice, please do not hesitate to reply to this email. We are here to help and want to ensure that your account is up to date.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send a polite payment-status follow-up for human review.,Medium risk customer with a history of late payments and low on-time payment rate.,Please review the customer's payment history and adjust the tone or content as needed before sending the follow-up email.,groq_llm,"```json
+{
+  ""subject"": ""Payment Follow-up for Invoice NEW-00021"",
+  ""body"": ""Dear Customer 9322-YCTQO,\n\nThis is a friendly follow-up regarding your outstanding balance for invoice NEW-00021. The amount due is USD 76.27, and the due date was February 20, 2014.\n\nIf you have any questions or concerns about this invoice, please do not hesitate to reply to this email. We are here to help and want to ensure that your account is up to date.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send a polite payment-status follow-up for human review."",
+  ""risk_reason_summary"": ""Medium risk customer with a history of late payments and low on-time payment rate."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone or content as needed before sending the follow-up email.""
+}
+```",
+new_inv_00022,NEW-00022,cust_1408-OQZUE,Customer 1408-OQZUE,50.0,USD,2014-03-23,high,Follow-up on Outstanding Invoice NEW-00022,"Dear Customer 1408-OQZUE,
+
+This is a friendly follow-up regarding your outstanding invoice NEW-00022, which is currently due on 2014-03-23. The amount due is USD 50.00. We understand that unforeseen circumstances may have caused delays in payment. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to assist you.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Customer has a history of late payments and a low on-time payment rate.,Please review the customer's payment history and adjust the tone and content as needed before sending the final email.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00022"",
+  ""body"": ""Dear Customer 1408-OQZUE,\n\nThis is a friendly follow-up regarding your outstanding invoice NEW-00022, which is currently due on 2014-03-23. The amount due is USD 50.00. We understand that unforeseen circumstances may have caused delays in payment. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to assist you.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone and content as needed before sending the final email.""
+}",
+new_inv_00023,NEW-00023,cust_2125-HJDLA,Customer 2125-HJDLA,50.0,USD,2014-02-22,medium,Payment Follow-up for Invoice NEW-00023,"Dear Customer 2125-HJDLA,
+
+This is a friendly reminder regarding your outstanding balance for invoice NEW-00023, which is due on 2014-02-22. The amount due is USD 50.00. If you have any questions or concerns about this invoice, please do not hesitate to contact us. We are here to help and want to ensure that your account is up to date.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send the follow-up email after human review,"Customer has a history of late payments and a medium predicted risk label, but this information will not be shared with the customer.",Please review the tone and content of this email to ensure it meets our company's standards before sending it to the customer.,groq_llm,"{
+  ""subject"": ""Payment Follow-up for Invoice NEW-00023"",
+  ""body"": ""Dear Customer 2125-HJDLA,\n\nThis is a friendly reminder regarding your outstanding balance for invoice NEW-00023, which is due on 2014-02-22. The amount due is USD 50.00. If you have any questions or concerns about this invoice, please do not hesitate to contact us. We are here to help and want to ensure that your account is up to date.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send the follow-up email after human review"",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a medium predicted risk label, but this information will not be shared with the customer."",
+  ""human_review_notes"": ""Please review the tone and content of this email to ensure it meets our company's standards before sending it to the customer.""
+}",
+new_inv_00024,NEW-00024,cust_1447-YZKCL,Customer 1447-YZKCL,68.53,USD,2014-02-23,low,Friendly Reminder: Outstanding Balance for Invoice NEW-00024,"Dear Customer 1447-YZKCL,
+
+This is a friendly reminder regarding your outstanding balance for invoice NEW-00024. The amount due is USD 68.53, with a due date of 2014-02-23. If you have any questions or concerns about this invoice, please do not hesitate to reply to this email.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send a friendly reminder for human review.,"Customer has a history of late payments, but this is a low-value invoice.",Please review the customer's payment history and adjust the tone accordingly.,groq_llm,"```json
+{
+  ""subject"": ""Friendly Reminder: Outstanding Balance for Invoice NEW-00024"",
+  ""body"": ""Dear Customer 1447-YZKCL,\n\nThis is a friendly reminder regarding your outstanding balance for invoice NEW-00024. The amount due is USD 68.53, with a due date of 2014-02-23. If you have any questions or concerns about this invoice, please do not hesitate to reply to this email.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send a friendly reminder for human review."",
+  ""risk_reason_summary"": ""Customer has a history of late payments, but this is a low-value invoice."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone accordingly.""
+}
+```",
+new_inv_00025,NEW-00025,cust_5529-TBPGK,Customer 5529-TBPGK,67.38,USD,2014-02-24,low,Friendly Reminder: Outstanding Balance for Invoice NEW-00025,"Dear Customer 5529-TBPGK,
+
+We hope this message finds you well. We are writing to follow up on your outstanding balance for invoice NEW-00025, which is currently due on 2014-02-24. The amount due is USD 67.38. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to help and want to ensure that we resolve this matter amicably.
+
+Thank you for your prompt attention to this matter.
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send a friendly reminder for human review.,"Customer has a history of late payments, but this is a low-value invoice and the customer has a moderate payment history.",Please review the customer's payment history and adjust the tone accordingly. Consider adding a phone number or alternative contact method for the customer to reach out if they have any questions.,groq_llm,"{
+  ""subject"": ""Friendly Reminder: Outstanding Balance for Invoice NEW-00025"",
+  ""body"": ""Dear Customer 5529-TBPGK,\n\nWe hope this message finds you well. We are writing to follow up on your outstanding balance for invoice NEW-00025, which is currently due on 2014-02-24. The amount due is USD 67.38. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to help and want to ensure that we resolve this matter amicably.\n\nThank you for your prompt attention to this matter.\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send a friendly reminder for human review."",
+  ""risk_reason_summary"": ""Customer has a history of late payments, but this is a low-value invoice and the customer has a moderate payment history."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone accordingly. Consider adding a phone number or alternative contact method for the customer to reach out if they have any questions.""
+}",
+new_inv_00026,NEW-00026,cust_4632-QZOKX,Customer 4632-QZOKX,76.66,USD,2014-03-12,high,Follow-up on Outstanding Invoice NEW-00026,"Dear Customer 4632-QZOKX,
+
+This is a follow-up on your outstanding invoice NEW-00026, which is due on 2014-03-12. The total amount due is USD 76.66. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us. We are here to help and want to ensure that we resolve this matter amicably.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Customer has a history of late payments and a low on-time payment rate.,Please review the tone and content to ensure it aligns with your company's communication standards.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00026"",
+  ""body"": ""Dear Customer 4632-QZOKX,\n\nThis is a follow-up on your outstanding invoice NEW-00026, which is due on 2014-03-12. The total amount due is USD 76.66. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us. We are here to help and want to ensure that we resolve this matter amicably.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Please review the tone and content to ensure it aligns with your company's communication standards.""
+}",
+new_inv_00027,NEW-00027,cust_3676-CQAIF,Customer 3676-CQAIF,54.94,USD,2014-03-13,high,Follow-up on Outstanding Invoice NEW-00027,"Dear Customer 3676-CQAIF,
+
+We are writing to follow up on your outstanding invoice NEW-00027, which is currently due on 2014-03-13. The total amount due is USD 54.94.
+
+If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to help and want to ensure that we resolve any issues promptly.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Ask the customer to confirm payment timing and whether there are issues.,Customer has a history of late payments and a low on-time payment rate.,Please review the customer's payment history and adjust the tone and content as needed to ensure a positive and professional communication.,groq_llm,"{
+  ""subject"": ""Follow-up on Outstanding Invoice NEW-00027"",
+  ""body"": ""Dear Customer 3676-CQAIF,\n\nWe are writing to follow up on your outstanding invoice NEW-00027, which is currently due on 2014-03-13. The total amount due is USD 54.94.\n\nIf you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email. We are here to help and want to ensure that we resolve any issues promptly.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Ask the customer to confirm payment timing and whether there are issues."",
+  ""risk_reason_summary"": ""Customer has a history of late payments and a low on-time payment rate."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone and content as needed to ensure a positive and professional communication.""
+}",
+new_inv_00028,NEW-00028,cust_0465-DTULQ,Customer 0465-DTULQ,59.05,USD,2014-03-29,low,Friendly Reminder: Outstanding Balance for Invoice NEW-00028,"Dear Customer 0465-DTULQ,
+
+We hope this message finds you well. We are writing to follow up on your outstanding balance for invoice NEW-00028, which is currently due on 2014-03-29. The total amount due is USD 59.05. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send a friendly reminder for human review.,"The customer has a history of 14 late payments and a previous on-time payment rate of 46.2%. However, this information is not being shared with the customer.",Please review the customer's payment history and adjust the tone and content of the email accordingly.,groq_llm,"```json
+{
+  ""subject"": ""Friendly Reminder: Outstanding Balance for Invoice NEW-00028"",
+  ""body"": ""Dear Customer 0465-DTULQ,\n\nWe hope this message finds you well. We are writing to follow up on your outstanding balance for invoice NEW-00028, which is currently due on 2014-03-29. The total amount due is USD 59.05. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send a friendly reminder for human review."",
+  ""risk_reason_summary"": ""The customer has a history of 14 late payments and a previous on-time payment rate of 46.2%. However, this information is not being shared with the customer."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone and content of the email accordingly.""
+}
+```",
+new_inv_00029,NEW-00029,cust_6831-FIODB,Customer 6831-FIODB,50.0,USD,2014-02-28,low,Friendly Reminder: Outstanding Balance for Invoice NEW-00029,"Dear Customer 6831-FIODB,
+
+We hope this message finds you well. We are writing to follow up on your outstanding balance for invoice NEW-00029, which is currently due on 2014-02-28. The amount due is USD 50.00. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send a friendly reminder for human review.,"Customer has a history of 14 late payments and an average of 5.46 days late, but has also made 26 previous payments.",Please review the customer's history and adjust the tone and content as needed before sending the final reminder.,groq_llm,"{
+  ""subject"": ""Friendly Reminder: Outstanding Balance for Invoice NEW-00029"",
+  ""body"": ""Dear Customer 6831-FIODB,\n\nWe hope this message finds you well. We are writing to follow up on your outstanding balance for invoice NEW-00029, which is currently due on 2014-02-28. The amount due is USD 50.00. If you have any questions or concerns regarding this invoice, please do not hesitate to reply to this email.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send a friendly reminder for human review."",
+  ""risk_reason_summary"": ""Customer has a history of 14 late payments and an average of 5.46 days late, but has also made 26 previous payments."",
+  ""human_review_notes"": ""Please review the customer's history and adjust the tone and content as needed before sending the final reminder.""
+}",
+new_inv_00030,NEW-00030,cust_7209-MDWKR,Customer 7209-MDWKR,52.73,USD,2014-03-01,low,Friendly Reminder: Outstanding Balance for Invoice NEW-00030,"Dear Customer 7209-MDWKR,
+
+We are writing to remind you of the outstanding balance for invoice NEW-00030, which is due on 2014-03-01. The amount due is USD 52.73. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us. We are here to help.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[Your Name]
+
+**Draft for Human Review**",Polite and Professional,Send a friendly reminder for human review.,Previous late payments and average days late indicate a potential issue with timely payments.,Please review the customer's payment history and adjust the tone or content as necessary before sending the reminder.,groq_llm,"{
+  ""subject"": ""Friendly Reminder: Outstanding Balance for Invoice NEW-00030"",
+  ""body"": ""Dear Customer 7209-MDWKR,\n\nWe are writing to remind you of the outstanding balance for invoice NEW-00030, which is due on 2014-03-01. The amount due is USD 52.73. If you have any questions or concerns regarding this invoice, please do not hesitate to contact us. We are here to help.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\n[Your Name]\n\n**Draft for Human Review**"",
+  ""tone"": ""Polite and Professional"",
+  ""recommended_action"": ""Send a friendly reminder for human review."",
+  ""risk_reason_summary"": ""Previous late payments and average days late indicate a potential issue with timely payments."",
+  ""human_review_notes"": ""Please review the customer's payment history and adjust the tone or content as necessary before sending the reminder.""
+}",
