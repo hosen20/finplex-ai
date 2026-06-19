@@ -19,9 +19,25 @@ class Settings(BaseSettings):
     guardrails_url: str = "http://localhost:8002"
 
     risk_model_path: Path = ROOT_DIR / "models" / "risk_model.joblib"
-    risk_feature_schema_path: Path = ROOT_DIR / "models" / "risk_feature_schema.json"
-    risk_label_mapping_path: Path = ROOT_DIR / "models" / "risk_label_mapping.json"
-    risk_model_metadata_path: Path = ROOT_DIR / "models" / "risk_model_metadata.json"
+    risk_feature_schema_path: Path = (
+        ROOT_DIR / "models" / "risk_feature_schema.json"
+    )
+    risk_label_mapping_path: Path = (
+        ROOT_DIR / "models" / "risk_label_mapping.json"
+    )
+    risk_model_metadata_path: Path = (
+        ROOT_DIR / "models" / "risk_model_metadata.json"
+    )
+
+    evidence_regulations_dir: Path = ROOT_DIR / "regulations"
+    evidence_seed_dir: Path = ROOT_DIR / "data" / "seed"
+    evidence_max_results: int = 5
+    evidence_chunk_size_chars: int = 900
+
+    rag_sparse_weight: float = 0.45
+    rag_dense_weight: float = 0.35
+    rag_exact_match_weight: float = 0.20
+    rag_semantic_dimensions: int = 64
 
     model_config = SettingsConfigDict(
         env_file=ROOT_DIR / ".env",

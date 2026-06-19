@@ -50,6 +50,33 @@ def test_score_risk_route_returns_prediction() -> None:
     assert body["top_risk_signals"]
 
 
+def test_search_evidence_route_returns_citations() -> None:
+    response = client.post(
+        "/search-evidence",
+        json={
+            "invoice_id": "new_inv_001",
+            "tenant_id": "tenant_demo",
+            "query": (
+                "Customer 1001 late payment dispute collection evidence "
+                "invoice ERP CRM regulation"
+            ),
+            "source_types": ["regulation", "erp", "crm", "invoice"],
+            "top_k": 4,
+        },
+    )
+
+    assert response.status_code == 200
+
+    body = response.json()
+
+    assert body["retrieval_method"] == "hybrid_sparse_dense_local"
+    assert isinstance(body["citations"], list)
+    assert body["citations"]
+    assert body["evidence_ids"] == [
+        citation["evidence_id"] for citation in body["citations"]
+    ]
+
+
 def test_process_invoice_route_returns_full_ai_payload() -> None:
     response = client.post(
         "/process-invoice",
@@ -77,3 +104,6 @@ def test_process_invoice_route_returns_full_ai_payload() -> None:
     assert body["extraction"]["extracted_fields"]["invoice_number"] == "NEW-00001"
     assert body["risk"]["risk_level"] in {"low", "medium", "high", "critical"}
     assert "draft_message" in body["draft"]
+    assert isinstance(body["citations"], list)
+    assert body["citations"]
+    assert body["draft"]["citations"]
