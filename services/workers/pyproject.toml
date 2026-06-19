@@ -2,11 +2,14 @@
 name = "finplex-workers"
 version = "0.1.0"
 description = "Local workers for asynchronous Finplex AI invoice processing."
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.14"
 dependencies = [
     "pydantic>=2.10,<3",
     "pydantic-settings>=2.7,<3",
     "httpx>=0.28,<0.29",
+    "kafka-python>=2.0,<3",
+    "sqlalchemy>=2.0,<3",
+    "psycopg[binary]>=3.2,<4",
 ]
 
 [dependency-groups]
