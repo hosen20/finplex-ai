@@ -1,31 +1,47 @@
-import time
-
+from app.clients.model_server_client import ModelServerClient
 from app.config import settings
+from app.events import InvoiceUploadedEvent
+from app.kafka_consumer import KafkaInvoiceUploadedConsumer
+from app.repositories import InvoiceProcessingRepository, SessionLocal
+from app.services.invoice_processing_service import InvoiceProcessingService
+from app.storage import LocalInvoiceTextReader
 
 
-def main() -> None:
-    """Run a lightweight local worker loop until Kafka consumption is implemented."""
-    print(
-        {
-            "service": settings.app_name,
-            "status": "running",
-            "environment": settings.environment,
-            "kafka": settings.kafka_bootstrap_servers,
-            "topic": settings.kafka_invoice_uploaded_topic,
-        },
-        flush=True,
-    )
+def handle_invoice_uploaded(event: InvoiceUploadedEvent) -> None:
+    """Process one invoice-uploaded event inside its own database session."""
+    with SessionLocal() as session:
+        repository = InvoiceProcessingRepository(session)
+        model_client = ModelServerClient()
+        text_reader = LocalInvoiceTextReader()
 
-    while True:
-        time.sleep(30)
+        service = InvoiceProcessingService(
+            repository=repository,
+            model_client=model_client,
+            text_reader=text_reader,
+        )
+        review_id = service.process_event(event)
+
         print(
             {
                 "service": settings.app_name,
-                "status": "waiting_for_invoice_events",
-                "topic": settings.kafka_invoice_uploaded_topic,
+                "status": "invoice_processed",
+                "invoice_id": event.invoice_id,
+                "review_id": review_id,
             },
             flush=True,
         )
+
+
+def main() -> None:
+    """Run the local Kafka invoice worker."""
+    consumer = KafkaInvoiceUploadedConsumer(
+        event_handler=handle_invoice_uploaded,
+    )
+
+    try:
+        consumer.run_forever()
+    finally:
+        consumer.close()
 
 
 if __name__ == "__main__":
