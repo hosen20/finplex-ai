@@ -1,0 +1,4 @@
+policy_version: guardrails_policy_v0.1.0
+required_evidence_minimum: 1
+max_exclamation_marks: 1
+max_uppercase_ratio: 0.35

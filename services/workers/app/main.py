@@ -1,3 +1,4 @@
+from app.clients.guardrails_client import GuardrailsClient
 from app.clients.model_server_client import ModelServerClient
 from app.config import settings
 from app.events import InvoiceUploadedEvent
@@ -12,11 +13,13 @@ def handle_invoice_uploaded(event: InvoiceUploadedEvent) -> None:
     with SessionLocal() as session:
         repository = InvoiceProcessingRepository(session)
         model_client = ModelServerClient()
+        guardrails_client = GuardrailsClient()
         text_reader = LocalInvoiceTextReader()
 
         service = InvoiceProcessingService(
             repository=repository,
             model_client=model_client,
+            guardrails_client=guardrails_client,
             text_reader=text_reader,
         )
         review_id = service.process_event(event)

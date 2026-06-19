@@ -2,13 +2,14 @@
 name = "finplex-guardrails"
 version = "0.1.0"
 description = "Guardrails service for compliant and evidence-based debt-collection drafts."
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.13"
 dependencies = [
     "fastapi>=0.115,<0.116",
     "uvicorn[standard]>=0.34,<0.35",
     "pydantic>=2.10,<3",
     "pydantic-settings>=2.7,<3",
     "pyyaml>=6.0,<7",
+    "nemoguardrails>=0.10,<1",
 ]
 
 [dependency-groups]

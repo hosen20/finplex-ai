@@ -1,0 +1,23 @@
+prohibited_phrases:
+  - "we will sue you"
+  - "you will be arrested"
+  - "final warning"
+  - "pay immediately or else"
+  - "legal action has already started"
+  - "we will contact your employer"
+  - "we will shame you"
+
+prohibited_regex:
+  - "\\barrest(ed)?\\b"
+  - "\\bjail\\b"
+  - "\\bcriminal\\b"
+  - "\\bpolice\\b"
+  - "\\bpublicly report\\b"
+
+aggressive_terms:
+  - "threat"
+  - "shame"
+  - "refuse"
+  - "blacklist"
+  - "harass"
+  - "punish"

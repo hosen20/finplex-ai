@@ -83,14 +83,35 @@ class FakeModelClient:
         return {
             "risk_level": "critical",
             "model_loaded": True,
+            "model_name": "logistic_regression",
             "evidence_ids": ["ev_risk"],
         }
 
     def draft_message(self, **kwargs: Any) -> dict[str, Any]:
         assert kwargs["risk_level"] == "high"
         return {
-            "draft_message": "Please review invoice INV-1.",
+            "draft_message": "Please review invoice INV-1 for 12000.",
             "evidence_ids": ["ev_draft"],
+        }
+
+
+class FakeGuardrailsClient:
+    def __init__(self, *, passed: bool = True) -> None:
+        self.passed = passed
+        self.calls: list[dict[str, Any]] = []
+
+    def validate_message(self, **kwargs: Any) -> dict[str, Any]:
+        self.calls.append(kwargs)
+        return {
+            "passed": self.passed,
+            "decision": (
+                "send_to_human_review" if self.passed else "block_rewrite"
+            ),
+            "redacted_message": kwargs["draft_message"],
+            "policy_version": "guardrails_policy_v0.1.0",
+            "findings": [],
+            "nemo_passed": self.passed,
+            "nemo_messages": ["NeMo first-pass validation passed."],
         }
 
 
@@ -113,36 +134,60 @@ def make_event() -> InvoiceUploadedEvent:
     )
 
 
-def test_process_event_creates_review_and_updates_invoice() -> None:
-    repository = FakeRepository()
-    service = InvoiceProcessingService(
+def make_service(
+    repository: FakeRepository,
+    guardrails_client: FakeGuardrailsClient,
+) -> InvoiceProcessingService:
+    return InvoiceProcessingService(
         repository=repository,
         model_client=FakeModelClient(),
+        guardrails_client=guardrails_client,
         text_reader=FakeTextReader(),
     )
+
+
+def test_process_event_creates_review_and_updates_invoice() -> None:
+    repository = FakeRepository()
+    guardrails_client = FakeGuardrailsClient(passed=True)
+    service = make_service(repository, guardrails_client)
 
     review_id = service.process_event(make_event())
 
     assert review_id == "review_1"
     assert repository.statuses == ["processing", "review_pending"]
     assert repository.reviews[0]["risk_level"] == "high"
-    assert repository.reviews[0]["guardrails_passed"] is False
+    assert repository.reviews[0]["guardrails_passed"] is True
     assert repository.reviews[0]["evidence_ids"] == [
         "ev_extract",
         "ev_risk",
         "ev_draft",
     ]
+    assert guardrails_client.calls[0]["risk_level"] == "high"
+    assert guardrails_client.calls[0]["amount_due"] == 12_000.0
     assert repository.commits == 1
     assert repository.rollbacks == 0
 
 
+def test_process_event_keeps_review_when_guardrails_block() -> None:
+    repository = FakeRepository()
+    guardrails_client = FakeGuardrailsClient(passed=False)
+    service = make_service(repository, guardrails_client)
+
+    review_id = service.process_event(make_event())
+
+    assert review_id == "review_1"
+    assert repository.reviews[0]["guardrails_passed"] is False
+    assert repository.statuses == ["processing", "review_pending"]
+
+    audit_actions = {audit["action"] for audit in repository.audits}
+    assert "guardrails_validated" in audit_actions
+    assert "invoice_processed" in audit_actions
+
+
 def test_process_event_raises_when_invoice_missing() -> None:
     repository = FakeRepository()
-    service = InvoiceProcessingService(
-        repository=repository,
-        model_client=FakeModelClient(),
-        text_reader=FakeTextReader(),
-    )
+    guardrails_client = FakeGuardrailsClient(passed=True)
+    service = make_service(repository, guardrails_client)
     event = make_event().model_copy(update={"invoice_id": "missing"})
 
     with pytest.raises(ValueError, match="was not found"):

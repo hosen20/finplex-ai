@@ -1,0 +1,16 @@
+audit_policy:
+  required_events:
+    - "draft_generated"
+    - "guardrails_validated"
+    - "human_review_created"
+    - "human_review_decision"
+
+  required_fields:
+    - "tenant_id"
+    - "invoice_id"
+    - "trace_id"
+    - "policy_version"
+    - "guardrail_decision"
+
+  retain_guardrail_findings: true
+  retain_evidence_ids: true

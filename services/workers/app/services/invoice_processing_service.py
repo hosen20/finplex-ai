@@ -83,23 +83,41 @@ class ModelServerClientProtocol(Protocol):
         ...
 
 
+class GuardrailsClientProtocol(Protocol):
+    def validate_message(
+        self,
+        *,
+        tenant_id: str,
+        invoice_id: str,
+        draft_message: str,
+        risk_level: str,
+        evidence_ids: list[str],
+        customer_name: str | None = None,
+        amount_due: float | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        ...
+
+
 class InvoiceTextReaderProtocol(Protocol):
     def read_text(self, event: InvoiceUploadedEvent) -> str:
         ...
 
 
 class InvoiceProcessingService:
-    """Coordinates invoice extraction, risk scoring, drafting, and DB updates."""
+    """Coordinates extraction, risk scoring, guardrails, review, and DB updates."""
 
     def __init__(
         self,
         *,
         repository: InvoiceRepositoryProtocol,
         model_client: ModelServerClientProtocol,
+        guardrails_client: GuardrailsClientProtocol,
         text_reader: InvoiceTextReaderProtocol,
     ) -> None:
         self.repository = repository
         self.model_client = model_client
+        self.guardrails_client = guardrails_client
         self.text_reader = text_reader
 
     def process_event(self, event: InvoiceUploadedEvent) -> str:
@@ -161,13 +179,51 @@ class InvoiceProcessingService:
                 evidence_ids,
                 draft.get("evidence_ids", []),
             )
+            draft_message = str(draft["draft_message"])
+
+            guardrails = self.guardrails_client.validate_message(
+                tenant_id=event.tenant_id,
+                invoice_id=event.invoice_id,
+                draft_message=draft_message,
+                risk_level=risk_level,
+                evidence_ids=evidence_ids,
+                customer_name=extracted_fields.get("customer_name"),
+                amount_due=extracted_fields.get("amount_due"),
+                metadata={
+                    "trace_id": trace_id,
+                    "model_loaded": risk.get("model_loaded", False),
+                    "model_name": risk.get("model_name"),
+                },
+            )
+
+            guardrails_passed = bool(guardrails.get("passed", False))
+            review_message = str(
+                guardrails.get("redacted_message") or draft_message
+            )
+            policy_version = str(guardrails.get("policy_version", "unknown"))
+
+            self.repository.record_audit(
+                tenant_id=event.tenant_id,
+                action="guardrails_validated",
+                actor_user_id=None,
+                entity_type="invoice",
+                entity_id=event.invoice_id,
+                trace_id=trace_id,
+                metadata_json={
+                    "passed": guardrails_passed,
+                    "decision": guardrails.get("decision"),
+                    "policy_version": policy_version,
+                    "finding_count": len(guardrails.get("findings", [])),
+                    "nemo_passed": guardrails.get("nemo_passed"),
+                },
+            )
 
             review_id = self.repository.create_review(
                 tenant_id=event.tenant_id,
                 invoice_id=event.invoice_id,
-                draft_message=str(draft["draft_message"]),
+                draft_message=review_message,
                 risk_level=risk_level,
-                guardrails_passed=False,
+                guardrails_passed=guardrails_passed,
                 evidence_ids=evidence_ids,
             )
 
@@ -188,6 +244,8 @@ class InvoiceProcessingService:
                     "review_id": review_id,
                     "risk_level": risk_level,
                     "model_loaded": risk.get("model_loaded", False),
+                    "guardrails_passed": guardrails_passed,
+                    "guardrail_decision": guardrails.get("decision"),
                 },
             )
 
