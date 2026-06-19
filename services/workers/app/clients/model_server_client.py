@@ -59,6 +59,28 @@ class ModelServerClient:
             },
         )
 
+    def search_evidence(
+        self,
+        *,
+        invoice_id: str,
+        tenant_id: str,
+        query: str,
+        source_types: list[str],
+        top_k: int = 5,
+        context: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        return self._post(
+            "/search-evidence",
+            {
+                "invoice_id": invoice_id,
+                "tenant_id": tenant_id,
+                "query": query,
+                "source_types": source_types,
+                "top_k": top_k,
+                "context": context or {},
+            },
+        )
+
     def draft_message(
         self,
         *,
@@ -67,6 +89,7 @@ class ModelServerClient:
         extracted_fields: dict[str, Any],
         risk_level: str,
         evidence_ids: list[str],
+        evidence_context: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
         customer_name = extracted_fields.get("customer_name") or "Customer"
 
@@ -82,6 +105,7 @@ class ModelServerClient:
                 "due_date": extracted_fields.get("due_date"),
                 "risk_level": risk_level,
                 "evidence_ids": evidence_ids,
+                "evidence_context": evidence_context or [],
             },
         )
 

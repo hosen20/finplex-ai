@@ -1,6 +1,8 @@
 from app.schemas import (
     DraftMessageRequest,
     DraftMessageResponse,
+    EvidenceSearchRequest,
+    EvidenceSearchResponse,
     InvoiceExtractionRequest,
     InvoiceExtractionResponse,
     InvoicePipelineRequest,
@@ -9,6 +11,7 @@ from app.schemas import (
     RiskScoreResponse,
 )
 from app.services.drafting_service import DraftingService
+from app.services.evidence_service import EvidenceService
 from app.services.extraction_service import InvoiceExtractionService
 from app.services.pipeline_service import InvoicePipelineService
 from app.services.risk_service import RiskScoringService
@@ -25,6 +28,11 @@ def extract_invoice(payload: InvoiceExtractionRequest):
 @router.post("/score-risk", response_model=RiskScoreResponse)
 def score_risk(payload: RiskScoreRequest):
     return RiskScoringService().score(payload)
+
+
+@router.post("/search-evidence", response_model=EvidenceSearchResponse)
+def search_evidence(payload: EvidenceSearchRequest):
+    return EvidenceService().search(payload)
 
 
 @router.post("/draft-message", response_model=DraftMessageResponse)

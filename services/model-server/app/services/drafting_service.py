@@ -1,9 +1,9 @@
 from app.config import settings
-from app.schemas import DraftMessageRequest, DraftMessageResponse
+from app.schemas import DraftMessageRequest, DraftMessageResponse, EvidenceCitation
 
 
 class DraftingService:
-    """Deterministic placeholder follow-up draft generator."""
+    """Deterministic responsible follow-up draft generator."""
 
     def create_draft(self, request: DraftMessageRequest) -> DraftMessageResponse:
         recipient = request.contact_name or request.customer_name
@@ -17,13 +17,23 @@ class DraftingService:
             due_text = f" due on {request.due_date}"
 
         tone_sentence = self._tone_sentence(request.risk_level)
+        evidence_sentence = self._evidence_sentence(request.evidence_context)
+
         draft = (
             f"Hello {recipient},\n\n"
             f"I hope you are well. We are following up on invoice {invoice_label}"
-            f"{amount_text}{due_text}. {tone_sentence}\n\n"
+            f"{amount_text}{due_text}. {tone_sentence} {evidence_sentence}\n\n"
             "Please let us know if payment has already been arranged or if there "
             "is anything we should review with your team.\n\n"
             "Thank you."
+        )
+
+        citations = request.evidence_context
+        evidence_ids = self._unique_evidence_ids(
+            [
+                *request.evidence_ids,
+                *[citation.evidence_id for citation in citations],
+            ]
         )
 
         return DraftMessageResponse(
@@ -31,7 +41,8 @@ class DraftingService:
             tenant_id=request.tenant_id,
             draft_message=draft,
             guardrails_required=True,
-            evidence_ids=request.evidence_ids,
+            evidence_ids=evidence_ids,
+            citations=citations,
             model_version=settings.pipeline_version,
         )
 
@@ -41,6 +52,38 @@ class DraftingService:
                 "We would appreciate a short update so we can resolve this "
                 "responsibly."
             )
+
         if risk_level == "medium":
             return "Could you please share the expected payment timing?"
+
         return "This is a friendly reminder for your records."
+
+    def _evidence_sentence(self, citations: list[EvidenceCitation]) -> str:
+        if not citations:
+            return (
+                "This message is based on the invoice and account information "
+                "available to our team."
+            )
+
+        source_types = self._unique_evidence_ids(
+            [citation.source_type for citation in citations]
+        )
+        source_text = ", ".join(source_types)
+
+        return (
+            "This message is based on available supporting records "
+            f"from: {source_text}."
+        )
+
+    def _unique_evidence_ids(self, values: list[str]) -> list[str]:
+        seen = set()
+        unique_values = []
+
+        for value in values:
+            if value in seen:
+                continue
+
+            seen.add(value)
+            unique_values.append(value)
+
+        return unique_values

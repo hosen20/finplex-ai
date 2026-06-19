@@ -71,6 +71,18 @@ class ModelServerClientProtocol(Protocol):
     ) -> dict[str, Any]:
         ...
 
+    def search_evidence(
+        self,
+        *,
+        invoice_id: str,
+        tenant_id: str,
+        query: str,
+        source_types: list[str],
+        top_k: int = 5,
+        context: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        ...
+
     def draft_message(
         self,
         *,
@@ -79,6 +91,7 @@ class ModelServerClientProtocol(Protocol):
         extracted_fields: dict[str, Any],
         risk_level: str,
         evidence_ids: list[str],
+        evidence_context: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
         ...
 
@@ -105,7 +118,7 @@ class InvoiceTextReaderProtocol(Protocol):
 
 
 class InvoiceProcessingService:
-    """Coordinates extraction, risk scoring, guardrails, review, and DB updates."""
+    """Coordinates extraction, risk, evidence retrieval, guardrails, and review."""
 
     def __init__(
         self,
@@ -167,12 +180,51 @@ class InvoiceProcessingService:
                 risk.get("evidence_ids", []),
             )
 
+            evidence = self.model_client.search_evidence(
+                invoice_id=event.invoice_id,
+                tenant_id=event.tenant_id,
+                query=self._build_evidence_query(
+                    event=event,
+                    extracted_fields=extracted_fields,
+                    risk=risk,
+                ),
+                source_types=["regulation", "invoice", "erp", "crm"],
+                top_k=5,
+                context={
+                    "trace_id": trace_id,
+                    "risk_level": risk_level,
+                    "customer_name": extracted_fields.get("customer_name"),
+                    "invoice_number": extracted_fields.get("invoice_number"),
+                },
+            )
+            evidence_citations = list(evidence.get("citations", []))
+
+            evidence_ids = self._merge_evidence_ids(
+                evidence_ids,
+                evidence.get("evidence_ids", []),
+            )
+
+            self.repository.record_audit(
+                tenant_id=event.tenant_id,
+                action="evidence_retrieved",
+                actor_user_id=None,
+                entity_type="invoice",
+                entity_id=event.invoice_id,
+                trace_id=trace_id,
+                metadata_json={
+                    "retrieval_method": evidence.get("retrieval_method"),
+                    "evidence_count": len(evidence_citations),
+                    "evidence_ids": evidence.get("evidence_ids", []),
+                },
+            )
+
             draft = self.model_client.draft_message(
                 invoice_id=event.invoice_id,
                 tenant_id=event.tenant_id,
                 extracted_fields=extracted_fields,
                 risk_level=risk_level,
                 evidence_ids=evidence_ids,
+                evidence_context=evidence_citations,
             )
 
             evidence_ids = self._merge_evidence_ids(
@@ -193,6 +245,7 @@ class InvoiceProcessingService:
                     "trace_id": trace_id,
                     "model_loaded": risk.get("model_loaded", False),
                     "model_name": risk.get("model_name"),
+                    "retrieval_method": evidence.get("retrieval_method"),
                 },
             )
 
@@ -246,6 +299,7 @@ class InvoiceProcessingService:
                     "model_loaded": risk.get("model_loaded", False),
                     "guardrails_passed": guardrails_passed,
                     "guardrail_decision": guardrails.get("decision"),
+                    "evidence_count": len(evidence_citations),
                 },
             )
 
@@ -316,6 +370,36 @@ class InvoiceProcessingService:
             ),
             "relationship_age_days": 950 if high_amount_signal else 420,
         }
+
+    def _build_evidence_query(
+        self,
+        *,
+        event: InvoiceUploadedEvent,
+        extracted_fields: dict[str, Any],
+        risk: dict[str, Any],
+    ) -> str:
+        query_parts = [
+            event.invoice_id,
+            event.file_name,
+            str(extracted_fields.get("invoice_number") or ""),
+            str(extracted_fields.get("customer_name") or ""),
+            str(extracted_fields.get("amount_due") or ""),
+            str(extracted_fields.get("due_date") or ""),
+            str(risk.get("risk_level") or ""),
+            " ".join(str(reason) for reason in risk.get("reasons", [])),
+        ]
+
+        for signal in risk.get("top_risk_signals", []):
+            if isinstance(signal, dict):
+                query_parts.extend(
+                    [
+                        str(signal.get("name") or ""),
+                        str(signal.get("reason") or ""),
+                        str(signal.get("value") or ""),
+                    ]
+                )
+
+        return " ".join(part for part in query_parts if part)
 
     def _payment_terms_days(self, payment_terms: Any) -> int:
         if payment_terms is None:

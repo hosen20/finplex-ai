@@ -3,6 +3,40 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
+class EvidenceCitation(BaseModel):
+    """Evidence item returned by hybrid RAG retrieval."""
+
+    evidence_id: str
+    source_type: str
+    title: str
+    snippet: str
+    score: float = Field(..., ge=0)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class EvidenceSearchRequest(BaseModel):
+    """Request for retrieving invoice, ERP, CRM, and regulation evidence."""
+
+    tenant_id: str
+    invoice_id: str
+    query: str = Field(min_length=1)
+    source_types: list[str] = Field(default_factory=list)
+    top_k: int = Field(5, ge=1, le=20)
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
+class EvidenceSearchResponse(BaseModel):
+    """Retrieved evidence used by drafts, guardrails, and the dashboard."""
+
+    tenant_id: str
+    invoice_id: str
+    query: str
+    citations: list[EvidenceCitation] = Field(default_factory=list)
+    evidence_ids: list[str] = Field(default_factory=list)
+    retrieval_method: str = "hybrid_sparse_dense_local"
+    model_version: str
+
+
 class ExtractedInvoiceFields(BaseModel):
     invoice_number: str | None = None
     customer_name: str | None = None
@@ -92,6 +126,7 @@ class DraftMessageRequest(BaseModel):
     due_date: str | None = None
     risk_level: str
     evidence_ids: list[str] = Field(default_factory=list)
+    evidence_context: list[EvidenceCitation] = Field(default_factory=list)
 
 
 class DraftMessageResponse(BaseModel):
@@ -100,6 +135,7 @@ class DraftMessageResponse(BaseModel):
     draft_message: str
     guardrails_required: bool = True
     evidence_ids: list[str] = Field(default_factory=list)
+    citations: list[EvidenceCitation] = Field(default_factory=list)
     model_version: str
 
 
@@ -115,3 +151,4 @@ class InvoicePipelineResponse(BaseModel):
     extraction: InvoiceExtractionResponse
     risk: RiskScoreResponse
     draft: DraftMessageResponse
+    citations: list[EvidenceCitation] = Field(default_factory=list)

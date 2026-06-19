@@ -65,6 +65,10 @@ class FakeRepository:
 
 
 class FakeModelClient:
+    def __init__(self) -> None:
+        self.evidence_calls: list[dict[str, Any]] = []
+        self.draft_calls: list[dict[str, Any]] = []
+
     def extract_invoice(self, **kwargs: Any) -> dict[str, Any]:
         return {
             "extracted_fields": {
@@ -82,16 +86,52 @@ class FakeModelClient:
         assert kwargs["risk_features"]["amount_due"] == 12_000.0
         return {
             "risk_level": "critical",
+            "risk_score": 0.91,
+            "reasons": ["High amount and previous late payments."],
             "model_loaded": True,
             "model_name": "logistic_regression",
             "evidence_ids": ["ev_risk"],
+            "top_risk_signals": [
+                {
+                    "name": "previous_late_payments",
+                    "value": 5,
+                    "reason": "Customer has previous late payments.",
+                }
+            ],
+        }
+
+    def search_evidence(self, **kwargs: Any) -> dict[str, Any]:
+        self.evidence_calls.append(kwargs)
+        return {
+            "retrieval_method": "hybrid_sparse_dense_local",
+            "evidence_ids": ["ev_evidence"],
+            "citations": [
+                {
+                    "evidence_id": "ev_evidence",
+                    "source_type": "erp",
+                    "title": "Historical Erp Payments",
+                    "snippet": "Acme invoice INV-1 was late by 14 days.",
+                    "score": 0.82,
+                    "metadata": {
+                        "sparse_score": 0.7,
+                        "dense_score": 0.6,
+                        "exact_match_score": 0.8,
+                    },
+                }
+            ],
         }
 
     def draft_message(self, **kwargs: Any) -> dict[str, Any]:
+        self.draft_calls.append(kwargs)
+
         assert kwargs["risk_level"] == "high"
+        assert kwargs["evidence_context"]
+        assert kwargs["evidence_context"][0]["evidence_id"] == "ev_evidence"
+
         return {
             "draft_message": "Please review invoice INV-1 for 12000.",
             "evidence_ids": ["ev_draft"],
+            "citations": kwargs["evidence_context"],
         }
 
 
@@ -137,10 +177,11 @@ def make_event() -> InvoiceUploadedEvent:
 def make_service(
     repository: FakeRepository,
     guardrails_client: FakeGuardrailsClient,
+    model_client: FakeModelClient | None = None,
 ) -> InvoiceProcessingService:
     return InvoiceProcessingService(
         repository=repository,
-        model_client=FakeModelClient(),
+        model_client=model_client or FakeModelClient(),
         guardrails_client=guardrails_client,
         text_reader=FakeTextReader(),
     )
@@ -149,7 +190,8 @@ def make_service(
 def test_process_event_creates_review_and_updates_invoice() -> None:
     repository = FakeRepository()
     guardrails_client = FakeGuardrailsClient(passed=True)
-    service = make_service(repository, guardrails_client)
+    model_client = FakeModelClient()
+    service = make_service(repository, guardrails_client, model_client)
 
     review_id = service.process_event(make_event())
 
@@ -160,10 +202,35 @@ def test_process_event_creates_review_and_updates_invoice() -> None:
     assert repository.reviews[0]["evidence_ids"] == [
         "ev_extract",
         "ev_risk",
+        "ev_evidence",
         "ev_draft",
     ]
+
+    assert model_client.evidence_calls
+    assert model_client.evidence_calls[0]["source_types"] == [
+        "regulation",
+        "invoice",
+        "erp",
+        "crm",
+    ]
+    assert model_client.draft_calls[0]["evidence_context"][0][
+        "evidence_id"
+    ] == "ev_evidence"
+
     assert guardrails_client.calls[0]["risk_level"] == "high"
     assert guardrails_client.calls[0]["amount_due"] == 12_000.0
+    assert guardrails_client.calls[0]["evidence_ids"] == [
+        "ev_extract",
+        "ev_risk",
+        "ev_evidence",
+        "ev_draft",
+    ]
+
+    audit_actions = {audit["action"] for audit in repository.audits}
+    assert "evidence_retrieved" in audit_actions
+    assert "guardrails_validated" in audit_actions
+    assert "invoice_processed" in audit_actions
+
     assert repository.commits == 1
     assert repository.rollbacks == 0
 
@@ -180,6 +247,7 @@ def test_process_event_keeps_review_when_guardrails_block() -> None:
     assert repository.statuses == ["processing", "review_pending"]
 
     audit_actions = {audit["action"] for audit in repository.audits}
+    assert "evidence_retrieved" in audit_actions
     assert "guardrails_validated" in audit_actions
     assert "invoice_processed" in audit_actions
 
