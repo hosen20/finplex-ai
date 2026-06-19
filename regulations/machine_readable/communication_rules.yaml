@@ -1,0 +1,14 @@
+communication_policy:
+  tone: "respectful"
+  allowed_actions:
+    - "ask for payment status"
+    - "share invoice details"
+    - "offer support"
+    - "request human review"
+  prohibited_actions:
+    - "threaten arrest"
+    - "claim legal action has started without evidence"
+    - "publicly shame customer"
+    - "contact employer"
+    - "use harassment or intimidation"
+  human_review_required: true

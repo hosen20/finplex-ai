@@ -1,0 +1,12 @@
+define user validate debt collection draft
+  "Validate this debt-collection draft for debt-collection compliance"
+
+define bot block unsafe collection draft
+  "blocked: unsafe debt-collection language detected"
+
+define bot allow safe collection draft
+  "allowed: draft passed first-pass NeMo validation"
+
+define flow
+  user validate debt collection draft
+  bot allow safe collection draft
