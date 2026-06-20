@@ -14,12 +14,10 @@ class ReviewCreateRequest(BaseModel):
 
 
 class ReviewDecisionRequest(BaseModel):
-    actor_user_id: str
     comment: str | None = None
 
 
 class ReviewRejectRequest(BaseModel):
-    actor_user_id: str
     comment: str
 
 
