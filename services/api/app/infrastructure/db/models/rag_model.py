@@ -4,6 +4,9 @@ from sqlalchemy import JSON, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.infrastructure.db.models.base import Base, TimestampMixin
+from app.infrastructure.db.types import PgVectorType
+
+RAG_EMBEDDING_DIMENSIONS = 8
 
 
 class RagDocumentModel(Base, TimestampMixin):
@@ -36,5 +39,9 @@ class RagChunkModel(Base, TimestampMixin):
     chunk_index: Mapped[int] = mapped_column(nullable=False)
     embedding: Mapped[list[float] | dict[str, Any] | None] = mapped_column(
         JSON,
+        nullable=True,
+    )
+    embedding_vector: Mapped[list[float] | None] = mapped_column(
+        PgVectorType(RAG_EMBEDDING_DIMENSIONS),
         nullable=True,
     )

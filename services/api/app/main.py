@@ -2,7 +2,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.error_handlers import register_error_handlers
-from app.api.routers import auth, customers, health, invoices, reviews, tenants, users
+from app.api.routers import (
+    auth,
+    customers,
+    health,
+    invoices,
+    rag,
+    reviews,
+    tenants,
+    users,
+)
 from app.config import settings
 
 app = FastAPI(
@@ -31,6 +40,7 @@ app.include_router(tenants.router)
 app.include_router(customers.router)
 app.include_router(invoices.router)
 app.include_router(reviews.router)
+app.include_router(rag.router)
 
 
 @app.get("/")
