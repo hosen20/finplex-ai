@@ -64,3 +64,14 @@ Thumbs.db
 
 !services/model-server/models/README.md
 !services/model-server/models/model_card.json
+# TypeScript / Vite build metadata
+*.tsbuildinfo
+apps/web/vite.config.d.ts
+
+# Streamlit local secrets
+.streamlit/secrets.toml
+apps/admin/.streamlit/secrets.toml
+
+# Local-only raw datasets that can be large
+data/external/*
+!data/external/.gitkeep
