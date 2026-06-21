@@ -105,9 +105,10 @@ class UserService:
         if actor is None:
             raise ValueError(f"User {actor_user_id} was not found.")
 
-        TenantPolicy.ensure_same_tenant(user_model_to_domain(actor), tenant_id)
+        actor_domain = user_model_to_domain(actor)
+        TenantPolicy.ensure_same_tenant(actor_domain, tenant_id)
 
-        if not actor.can_manage_tenant and actor.role != UserRole.AUDITOR:
+        if not actor_domain.can_manage_tenant and actor_domain.role != UserRole.AUDITOR:
             raise PermissionDeniedError(
                 f"User {actor_user_id} cannot list users for tenant {tenant_id}."
             )

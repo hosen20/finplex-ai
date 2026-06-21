@@ -5,7 +5,7 @@ from app.application.services.mappers import (
     review_model_to_domain,
     user_model_to_domain,
 )
-from app.domain.enums import AuditAction, ReviewStatus, RiskLevel
+from app.domain.enums import AuditAction, InvoiceStatus, ReviewStatus, RiskLevel
 from app.domain.policies.review_policy import ReviewPolicy
 from app.infrastructure.db.models.review_model import ReviewModel
 from app.infrastructure.db.repositories.invoice_repository import InvoiceRepository
@@ -52,6 +52,7 @@ class ReviewService:
             status=ReviewStatus.PENDING,
         )
         self.reviews.add(review)
+        invoice.status = InvoiceStatus.REVIEW_PENDING
 
         self.audit.record(
             tenant_id=tenant_id,
@@ -98,6 +99,7 @@ class ReviewService:
         review.status = domain_review.status
         review.reviewer_user_id = actor_user_id
         review.reviewer_comment = comment
+        self._set_invoice_status_for_review(review, InvoiceStatus.APPROVED)
 
         self.audit.record(
             tenant_id=review.tenant_id,
@@ -131,6 +133,7 @@ class ReviewService:
         review.status = domain_review.status
         review.reviewer_user_id = actor_user_id
         review.reviewer_comment = comment
+        self._set_invoice_status_for_review(review, InvoiceStatus.REJECTED)
 
         self.audit.record(
             tenant_id=review.tenant_id,
@@ -165,9 +168,24 @@ class ReviewService:
         review.status = domain_review.status
         review.reviewer_user_id = actor_user_id
         review.reviewer_comment = comment
+        self._set_invoice_status_for_review(review, InvoiceStatus.REVIEW_PENDING)
 
         self.session.commit()
         return review
+
+    def _set_invoice_status_for_review(
+        self,
+        review: ReviewModel,
+        status: InvoiceStatus,
+    ) -> None:
+        invoice = self.invoices.get(review.invoice_id)
+        if invoice is None:
+            raise ValueError(f"Invoice {review.invoice_id} was not found.")
+        if invoice.tenant_id != review.tenant_id:
+            raise PermissionError(
+                f"Invoice {review.invoice_id} is not in tenant {review.tenant_id}."
+            )
+        invoice.status = status
 
     def _get_review(self, review_id: str) -> ReviewModel:
         review = self.reviews.get(review_id)

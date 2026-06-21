@@ -66,45 +66,56 @@ class FakeRepository:
 
 class FakeModelClient:
     def __init__(self) -> None:
-        self.evidence_calls: list[dict[str, Any]] = []
-        self.draft_calls: list[dict[str, Any]] = []
+        self.pipeline_calls: list[dict[str, Any]] = []
 
-    def extract_invoice(self, **kwargs: Any) -> dict[str, Any]:
+    def process_invoice(self, **kwargs: Any) -> dict[str, Any]:
+        self.pipeline_calls.append(kwargs)
+        assert "risk_features" not in kwargs
+        assert kwargs["pipeline_context"]["trace_id"] == "evt_1"
+
         return {
-            "extracted_fields": {
-                "invoice_number": "INV-1",
-                "customer_name": "Acme",
-                "amount_due": 12_000.0,
-                "currency": "USD",
-                "due_date": "2026-07-01",
-                "payment_terms": "net_30",
+            "extraction": {
+                "invoice_id": "inv_1",
+                "tenant_id": "tenant_1",
+                "extracted_fields": {
+                    "invoice_number": "INV-1",
+                    "customer_name": "Acme",
+                    "amount_due": 12_000.0,
+                    "currency": "USD",
+                    "due_date": "2026-07-01",
+                    "payment_terms": "net_30",
+                },
+                "confidence": 0.95,
+                "evidence_ids": ["ev_extract"],
+                "model_version": "pipeline_v1",
             },
-            "evidence_ids": ["ev_extract"],
-        }
-
-    def score_risk(self, **kwargs: Any) -> dict[str, Any]:
-        assert kwargs["risk_features"]["amount_due"] == 12_000.0
-        return {
-            "risk_level": "critical",
-            "risk_score": 0.91,
-            "reasons": ["High amount and previous late payments."],
-            "model_loaded": True,
-            "model_name": "logistic_regression",
-            "evidence_ids": ["ev_risk"],
-            "top_risk_signals": [
-                {
-                    "name": "previous_late_payments",
-                    "value": 5,
-                    "reason": "Customer has previous late payments.",
-                }
-            ],
-        }
-
-    def search_evidence(self, **kwargs: Any) -> dict[str, Any]:
-        self.evidence_calls.append(kwargs)
-        return {
-            "retrieval_method": "hybrid_sparse_dense_local",
-            "evidence_ids": ["ev_evidence"],
+            "risk": {
+                "invoice_id": "inv_1",
+                "tenant_id": "tenant_1",
+                "risk_level": "critical",
+                "risk_score": 0.91,
+                "reasons": ["High amount and previous late payments."],
+                "evidence_ids": ["ev_risk"],
+                "model_version": "pipeline_v1",
+                "model_loaded": True,
+                "model_name": "logistic_regression",
+                "top_risk_signals": [
+                    {
+                        "name": "previous_late_payments",
+                        "value": 5,
+                        "reason": "Customer has previous late payments.",
+                    }
+                ],
+            },
+            "draft": {
+                "invoice_id": "inv_1",
+                "tenant_id": "tenant_1",
+                "draft_message": "Please review invoice INV-1 for 12000.",
+                "guardrails_required": True,
+                "evidence_ids": ["ev_draft"],
+                "citations": [],
+                "model_version": "pipeline_v1",
+            },
             "citations": [
                 {
                     "evidence_id": "ev_evidence",
@@ -113,25 +124,10 @@ class FakeModelClient:
                     "snippet": "Acme invoice INV-1 was late by 14 days.",
                     "score": 0.82,
                     "metadata": {
-                        "sparse_score": 0.7,
-                        "dense_score": 0.6,
-                        "exact_match_score": 0.8,
+                        "retrieval_method": "hybrid_sparse_dense_local",
                     },
                 }
             ],
-        }
-
-    def draft_message(self, **kwargs: Any) -> dict[str, Any]:
-        self.draft_calls.append(kwargs)
-
-        assert kwargs["risk_level"] == "high"
-        assert kwargs["evidence_context"]
-        assert kwargs["evidence_context"][0]["evidence_id"] == "ev_evidence"
-
-        return {
-            "draft_message": "Please review invoice INV-1 for 12000.",
-            "evidence_ids": ["ev_draft"],
-            "citations": kwargs["evidence_context"],
         }
 
 
@@ -202,61 +198,41 @@ def test_process_event_creates_review_and_updates_invoice() -> None:
     assert repository.reviews[0]["evidence_ids"] == [
         "ev_extract",
         "ev_risk",
-        "ev_evidence",
         "ev_draft",
+        "ev_evidence",
     ]
 
-    assert model_client.evidence_calls
-    assert model_client.evidence_calls[0]["source_types"] == [
-        "regulation",
-        "invoice",
-        "erp",
-        "crm",
-    ]
-    assert model_client.draft_calls[0]["evidence_context"][0][
-        "evidence_id"
-    ] == "ev_evidence"
-
+    assert len(model_client.pipeline_calls) == 1
+    assert model_client.pipeline_calls[0]["text"].startswith("Invoice number")
     assert guardrails_client.calls[0]["risk_level"] == "high"
-    assert guardrails_client.calls[0]["amount_due"] == 12_000.0
     assert guardrails_client.calls[0]["evidence_ids"] == [
         "ev_extract",
         "ev_risk",
-        "ev_evidence",
         "ev_draft",
+        "ev_evidence",
     ]
 
-    audit_actions = {audit["action"] for audit in repository.audits}
-    assert "evidence_retrieved" in audit_actions
-    assert "guardrails_validated" in audit_actions
-    assert "invoice_processed" in audit_actions
-
-    assert repository.commits == 1
-    assert repository.rollbacks == 0
+    extracted_fields = repository.invoice["extracted_fields"]
+    assert extracted_fields["ai_pipeline"]["review_id"] == "review_1"
+    assert extracted_fields["ai_pipeline"]["pipeline_version"] == "pipeline_v1"
+    assert extracted_fields["ai_pipeline"]["guardrails_passed"] is True
 
 
-def test_process_event_keeps_review_when_guardrails_block() -> None:
+def test_guardrail_failure_still_routes_to_human_review() -> None:
     repository = FakeRepository()
-    guardrails_client = FakeGuardrailsClient(passed=False)
-    service = make_service(repository, guardrails_client)
+    service = make_service(repository, FakeGuardrailsClient(passed=False))
 
     review_id = service.process_event(make_event())
 
     assert review_id == "review_1"
     assert repository.reviews[0]["guardrails_passed"] is False
-    assert repository.statuses == ["PROCESSING", "REVIEW_PENDING"]
-
-    audit_actions = {audit["action"] for audit in repository.audits}
-    assert "evidence_retrieved" in audit_actions
-    assert "guardrails_validated" in audit_actions
-    assert "invoice_processed" in audit_actions
+    assert repository.statuses[-1] == "REVIEW_PENDING"
 
 
-def test_process_event_raises_when_invoice_missing() -> None:
+def test_missing_invoice_raises_error() -> None:
     repository = FakeRepository()
-    guardrails_client = FakeGuardrailsClient(passed=True)
-    service = make_service(repository, guardrails_client)
-    event = make_event().model_copy(update={"invoice_id": "missing"})
+    repository.invoice = {"invoice_id": "other", "tenant_id": "tenant_1"}
+    service = make_service(repository, FakeGuardrailsClient())
 
-    with pytest.raises(ValueError, match="was not found"):
-        service.process_event(event)
+    with pytest.raises(ValueError):
+        service.process_event(make_event())

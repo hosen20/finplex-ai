@@ -170,3 +170,77 @@ def test_model_server_client_posts_to_draft_message_with_evidence() -> None:
     assert captured_payloads[0]["evidence_context"][0][
         "evidence_id"
     ] == "ev_evidence"
+
+
+def test_model_server_client_posts_to_process_invoice() -> None:
+    captured_payloads = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured_payloads.append(json.loads(request.content.decode("utf-8")))
+        return httpx.Response(
+            200,
+            json={
+                "extraction": {
+                    "invoice_id": "inv_1",
+                    "tenant_id": "tenant_1",
+                    "extracted_fields": {
+                        "invoice_number": "INV-1",
+                        "customer_name": "Acme",
+                        "amount_due": 1200.0,
+                        "currency": "USD",
+                        "due_date": "2026-07-01",
+                        "payment_terms": "net_30",
+                    },
+                    "confidence": 0.95,
+                    "evidence_ids": ["ev_extract"],
+                    "model_version": "test",
+                },
+                "risk": {
+                    "invoice_id": "inv_1",
+                    "tenant_id": "tenant_1",
+                    "risk_level": "medium",
+                    "risk_score": 0.55,
+                    "reasons": [],
+                    "evidence_ids": ["ev_risk"],
+                    "model_version": "test",
+                    "model_loaded": True,
+                    "model_name": "fake",
+                    "probabilities": {"medium": 0.55},
+                    "feature_source": "trained_notebook_artifact",
+                    "top_risk_signals": [],
+                },
+                "draft": {
+                    "invoice_id": "inv_1",
+                    "tenant_id": "tenant_1",
+                    "draft_message": "Please review invoice INV-1.",
+                    "guardrails_required": True,
+                    "evidence_ids": ["ev_draft"],
+                    "citations": [],
+                    "model_version": "test",
+                },
+                "citations": [],
+            },
+        )
+
+    client = httpx.Client(
+        transport=httpx.MockTransport(handler),
+        base_url="http://model-server.test",
+    )
+    model_client = ModelServerClient(
+        base_url="http://model-server.test",
+        client=client,
+    )
+
+    response = model_client.process_invoice(
+        invoice_id="inv_1",
+        tenant_id="tenant_1",
+        file_name="invoice.txt",
+        storage_key="tenant_1/invoices/inv_1/invoice.txt",
+        text="Invoice number: INV-1",
+        risk_features={"amount_due": 1200.0, "payment_terms_days": 30},
+        pipeline_context={"trace_id": "evt_1"},
+    )
+
+    assert response["draft"]["draft_message"] == "Please review invoice INV-1."
+    assert captured_payloads[0]["risk_features"]["amount_due"] == 1200.0
+    assert captured_payloads[0]["context"]["trace_id"] == "evt_1"
