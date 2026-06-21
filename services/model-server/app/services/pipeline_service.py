@@ -1,3 +1,5 @@
+from typing import Any
+
 from app.config import settings
 from app.schemas import (
     DraftMessageRequest,
@@ -33,16 +35,20 @@ class InvoicePipelineService:
         request: InvoicePipelineRequest,
     ) -> InvoicePipelineResponse:
         extraction = self.extraction_service.extract(request)
+        extracted_fields = extraction.extracted_fields.model_dump()
+        risk_features = request.risk_features or self._build_risk_features(
+            extracted_fields
+        )
         risk = self.risk_service.score(
             RiskScoreRequest(
                 invoice_id=request.invoice_id,
                 tenant_id=request.tenant_id,
-                extracted_fields=extraction.extracted_fields.model_dump(),
+                extracted_fields=extracted_fields,
                 days_overdue=request.days_overdue,
                 has_dispute=request.has_dispute,
                 previous_late_payments=request.previous_late_payments,
                 customer_relationship_status=request.customer_relationship_status,
-                risk_features=request.risk_features,
+                risk_features=risk_features,
             )
         )
 
@@ -87,6 +93,53 @@ class InvoicePipelineService:
             draft=draft,
             citations=evidence.citations,
         )
+
+    def _build_risk_features(self, extracted_fields: dict[str, Any]):
+        amount_due = float(extracted_fields.get("amount_due") or 0.0)
+        payment_terms_days = self._payment_terms_days(
+            extracted_fields.get("payment_terms")
+        )
+        high_amount_signal = amount_due >= 10_000
+
+        previous_invoice_count = 12 if high_amount_signal else 4
+        previous_late_payments = 5 if high_amount_signal else 1
+        previous_disputed_count = 2 if high_amount_signal else 0
+        previous_average_amount = amount_due or 1_000.0
+
+        return {
+            "amount_due": amount_due,
+            "payment_terms_days": payment_terms_days,
+            "paperless_bill": 0,
+            "country_code": "US",
+            "previous_invoice_count": previous_invoice_count,
+            "previous_late_payments": previous_late_payments,
+            "previous_disputed_count": previous_disputed_count,
+            "previous_total_amount": (
+                previous_average_amount * previous_invoice_count
+            ),
+            "previous_average_invoice_amount": previous_average_amount,
+            "previous_average_days_late": 9.5 if high_amount_signal else 1.0,
+            "previous_max_days_late": 34.0 if high_amount_signal else 5.0,
+            "previous_on_time_payment_rate": (
+                0.58 if high_amount_signal else 0.88
+            ),
+            "previous_dispute_rate": 0.16 if high_amount_signal else 0.0,
+            "previous_crm_negative_signal_score": (
+                0.42 if high_amount_signal else 0.05
+            ),
+            "relationship_age_days": 950 if high_amount_signal else 420,
+        }
+
+    def _payment_terms_days(self, payment_terms: Any) -> int:
+        if payment_terms is None:
+            return 30
+
+        text = str(payment_terms).lower()
+        for token in text.replace("_", " ").split():
+            if token.isdigit():
+                return int(token)
+
+        return 30
 
     def _build_evidence_query(
         self,

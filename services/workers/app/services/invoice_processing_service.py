@@ -50,7 +50,7 @@ class InvoiceRepositoryProtocol(Protocol):
 
 
 class ModelServerClientProtocol(Protocol):
-    def extract_invoice(
+    def process_invoice(
         self,
         *,
         invoice_id: str,
@@ -58,40 +58,8 @@ class ModelServerClientProtocol(Protocol):
         file_name: str,
         storage_key: str,
         text: str,
-    ) -> dict[str, Any]:
-        ...
-
-    def score_risk(
-        self,
-        *,
-        invoice_id: str,
-        tenant_id: str,
-        extracted_fields: dict[str, Any],
-        risk_features: dict[str, Any],
-    ) -> dict[str, Any]:
-        ...
-
-    def search_evidence(
-        self,
-        *,
-        invoice_id: str,
-        tenant_id: str,
-        query: str,
-        source_types: list[str],
-        top_k: int = 5,
-        context: dict[str, Any] | None = None,
-    ) -> dict[str, Any]:
-        ...
-
-    def draft_message(
-        self,
-        *,
-        invoice_id: str,
-        tenant_id: str,
-        extracted_fields: dict[str, Any],
-        risk_level: str,
-        evidence_ids: list[str],
-        evidence_context: list[dict[str, Any]] | None = None,
+        risk_features: dict[str, Any] | None = None,
+        pipeline_context: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         ...
 
@@ -118,7 +86,13 @@ class InvoiceTextReaderProtocol(Protocol):
 
 
 class InvoiceProcessingService:
-    """Coordinates extraction, risk, evidence retrieval, guardrails, and review."""
+    """Coordinates invoice AI processing as one product workflow.
+
+    The worker keeps HTTP upload fast. After Kafka receives an invoice upload
+    event, the worker reads OCR text, calls the model-server pipeline once
+    for extraction, risk, RAG evidence, and draft generation, validates the
+    draft through guardrails, then creates a human review task.
+    """
 
     def __init__(
         self,
@@ -152,56 +126,44 @@ class InvoiceProcessingService:
                 entity_type="invoice",
                 entity_id=event.invoice_id,
                 trace_id=trace_id,
-                metadata_json={"file_name": event.file_name},
+                metadata_json={
+                    "file_name": event.file_name,
+                    "content_type": event.content_type,
+                    "size_bytes": event.size_bytes,
+                    "pipeline_mode": "model_server_process_invoice",
+                },
             )
 
             invoice_text = self.text_reader.read_text(event)
 
-            extraction = self.model_client.extract_invoice(
+            pipeline = self.model_client.process_invoice(
                 invoice_id=event.invoice_id,
                 tenant_id=event.tenant_id,
                 file_name=event.file_name,
                 storage_key=event.storage_key,
                 text=invoice_text,
+                pipeline_context={
+                    "trace_id": trace_id,
+                    "uploaded_by_user_id": event.uploaded_by_user_id,
+                    "content_type": event.content_type,
+                    "size_bytes": event.size_bytes,
+                },
             )
-            extracted_fields = dict(extraction.get("extracted_fields", {}))
-            risk_features = self._build_risk_features(extracted_fields)
 
-            risk = self.model_client.score_risk(
-                invoice_id=event.invoice_id,
-                tenant_id=event.tenant_id,
-                extracted_fields=extracted_fields,
-                risk_features=risk_features,
-            )
+            extraction = dict(pipeline.get("extraction", {}))
+            risk = dict(pipeline.get("risk", {}))
+            draft = dict(pipeline.get("draft", {}))
+            citations = list(pipeline.get("citations", []))
+
+            extracted_fields = dict(extraction.get("extracted_fields", {}))
             risk_level = self._normalize_risk_level(str(risk["risk_level"]))
+            draft_message = str(draft["draft_message"])
 
             evidence_ids = self._merge_evidence_ids(
                 extraction.get("evidence_ids", []),
                 risk.get("evidence_ids", []),
-            )
-
-            evidence = self.model_client.search_evidence(
-                invoice_id=event.invoice_id,
-                tenant_id=event.tenant_id,
-                query=self._build_evidence_query(
-                    event=event,
-                    extracted_fields=extracted_fields,
-                    risk=risk,
-                ),
-                source_types=["regulation", "invoice", "erp", "crm"],
-                top_k=5,
-                context={
-                    "trace_id": trace_id,
-                    "risk_level": risk_level,
-                    "customer_name": extracted_fields.get("customer_name"),
-                    "invoice_number": extracted_fields.get("invoice_number"),
-                },
-            )
-            evidence_citations = list(evidence.get("citations", []))
-
-            evidence_ids = self._merge_evidence_ids(
-                evidence_ids,
-                evidence.get("evidence_ids", []),
+                draft.get("evidence_ids", []),
+                [citation.get("evidence_id") for citation in citations],
             )
 
             self.repository.record_audit(
@@ -212,26 +174,12 @@ class InvoiceProcessingService:
                 entity_id=event.invoice_id,
                 trace_id=trace_id,
                 metadata_json={
-                    "retrieval_method": evidence.get("retrieval_method"),
-                    "evidence_count": len(evidence_citations),
-                    "evidence_ids": evidence.get("evidence_ids", []),
+                    "retrieval_method": self._pipeline_retrieval_method(pipeline),
+                    "evidence_count": len(citations),
+                    "evidence_ids": evidence_ids,
+                    "pipeline_version": self._pipeline_version(pipeline),
                 },
             )
-
-            draft = self.model_client.draft_message(
-                invoice_id=event.invoice_id,
-                tenant_id=event.tenant_id,
-                extracted_fields=extracted_fields,
-                risk_level=risk_level,
-                evidence_ids=evidence_ids,
-                evidence_context=evidence_citations,
-            )
-
-            evidence_ids = self._merge_evidence_ids(
-                evidence_ids,
-                draft.get("evidence_ids", []),
-            )
-            draft_message = str(draft["draft_message"])
 
             guardrails = self.guardrails_client.validate_message(
                 tenant_id=event.tenant_id,
@@ -245,7 +193,8 @@ class InvoiceProcessingService:
                     "trace_id": trace_id,
                     "model_loaded": risk.get("model_loaded", False),
                     "model_name": risk.get("model_name"),
-                    "retrieval_method": evidence.get("retrieval_method"),
+                    "retrieval_method": self._pipeline_retrieval_method(pipeline),
+                    "pipeline_version": self._pipeline_version(pipeline),
                 },
             )
 
@@ -283,7 +232,13 @@ class InvoiceProcessingService:
             self.repository.update_invoice_processing(
                 invoice_id=event.invoice_id,
                 status="REVIEW_PENDING",
-                extracted_fields=extracted_fields,
+                extracted_fields=self._enrich_extracted_fields(
+                    extracted_fields=extracted_fields,
+                    pipeline=pipeline,
+                    guardrails=guardrails,
+                    risk_level=risk_level,
+                    review_id=review_id,
+                ),
                 evidence_ids=evidence_ids,
             )
             self.repository.record_audit(
@@ -296,10 +251,13 @@ class InvoiceProcessingService:
                 metadata_json={
                     "review_id": review_id,
                     "risk_level": risk_level,
+                    "risk_score": risk.get("risk_score"),
                     "model_loaded": risk.get("model_loaded", False),
+                    "model_name": risk.get("model_name"),
                     "guardrails_passed": guardrails_passed,
                     "guardrail_decision": guardrails.get("decision"),
-                    "evidence_count": len(evidence_citations),
+                    "evidence_count": len(citations),
+                    "pipeline_version": self._pipeline_version(pipeline),
                 },
             )
 
@@ -331,6 +289,61 @@ class InvoiceProcessingService:
             metadata_json={"error": str(exc)},
         )
         self.repository.commit()
+
+    def _enrich_extracted_fields(
+        self,
+        *,
+        extracted_fields: dict[str, Any],
+        pipeline: dict[str, Any],
+        guardrails: dict[str, Any],
+        risk_level: str,
+        review_id: str,
+    ) -> dict[str, Any]:
+        risk = dict(pipeline.get("risk", {}))
+        draft = dict(pipeline.get("draft", {}))
+        citations = list(pipeline.get("citations", []))
+
+        return {
+            **extracted_fields,
+            "ai_pipeline": {
+                "pipeline_version": self._pipeline_version(pipeline),
+                "risk_level": risk_level,
+                "risk_score": risk.get("risk_score"),
+                "risk_reasons": risk.get("reasons", []),
+                "top_risk_signals": risk.get("top_risk_signals", []),
+                "model_name": risk.get("model_name"),
+                "model_loaded": risk.get("model_loaded", False),
+                "retrieval_method": self._pipeline_retrieval_method(pipeline),
+                "citation_count": len(citations),
+                "draft_model_version": draft.get("model_version"),
+                "guardrails_passed": bool(guardrails.get("passed", False)),
+                "guardrail_decision": guardrails.get("decision"),
+                "review_id": review_id,
+            },
+        }
+
+    def _pipeline_version(self, pipeline: dict[str, Any]) -> str | None:
+        extraction = dict(pipeline.get("extraction", {}))
+        risk = dict(pipeline.get("risk", {}))
+        draft = dict(pipeline.get("draft", {}))
+        return (
+            draft.get("model_version")
+            or risk.get("model_version")
+            or extraction.get("model_version")
+        )
+
+    def _pipeline_retrieval_method(self, pipeline: dict[str, Any]) -> str | None:
+        citations = pipeline.get("citations", [])
+        if not citations:
+            return None
+
+        first_citation = citations[0]
+        if isinstance(first_citation, dict):
+            metadata = first_citation.get("metadata", {})
+            if isinstance(metadata, dict):
+                return metadata.get("retrieval_method")
+
+        return "model_server_pipeline"
 
     def _build_risk_features(
         self,
@@ -371,36 +384,6 @@ class InvoiceProcessingService:
             "relationship_age_days": 950 if high_amount_signal else 420,
         }
 
-    def _build_evidence_query(
-        self,
-        *,
-        event: InvoiceUploadedEvent,
-        extracted_fields: dict[str, Any],
-        risk: dict[str, Any],
-    ) -> str:
-        query_parts = [
-            event.invoice_id,
-            event.file_name,
-            str(extracted_fields.get("invoice_number") or ""),
-            str(extracted_fields.get("customer_name") or ""),
-            str(extracted_fields.get("amount_due") or ""),
-            str(extracted_fields.get("due_date") or ""),
-            str(risk.get("risk_level") or ""),
-            " ".join(str(reason) for reason in risk.get("reasons", [])),
-        ]
-
-        for signal in risk.get("top_risk_signals", []):
-            if isinstance(signal, dict):
-                query_parts.extend(
-                    [
-                        str(signal.get("name") or ""),
-                        str(signal.get("reason") or ""),
-                        str(signal.get("value") or ""),
-                    ]
-                )
-
-        return " ".join(part for part in query_parts if part)
-
     def _payment_terms_days(self, payment_terms: Any) -> int:
         if payment_terms is None:
             return 30
@@ -431,6 +414,9 @@ class InvoiceProcessingService:
                 continue
 
             for evidence_id in group:
+                if evidence_id is None:
+                    continue
+
                 evidence_id_text = str(evidence_id)
                 if evidence_id_text not in merged:
                     merged.append(evidence_id_text)

@@ -62,3 +62,25 @@ def test_drafting_service_creates_guardrails_required_message() -> None:
     assert "Acme SARL" in response.draft_message
     assert response.guardrails_required is True
     assert response.evidence_ids == ["ev_001"]
+
+def test_pipeline_service_builds_risk_features_from_extraction() -> None:
+    from app.schemas import InvoicePipelineRequest
+    from app.services.pipeline_service import InvoicePipelineService
+
+    response = InvoicePipelineService().process_invoice(
+        InvoicePipelineRequest(
+            invoice_id="inv_pipeline_001",
+            tenant_id="tenant_001",
+            file_name="invoice.txt",
+            storage_key="tenant_001/invoices/inv_pipeline_001/invoice.txt",
+            text=(
+                "Invoice Number: INV-PIPE Customer: Cedar Clinic "
+                "Total: 15000.00 Due Date: 2026-07-15 Net 30"
+            ),
+        )
+    )
+
+    assert response.extraction.extracted_fields.amount_due == 15000.0
+    assert response.risk.risk_level in {"medium", "high", "critical"}
+    assert response.risk.top_risk_signals
+    assert response.draft.evidence_ids

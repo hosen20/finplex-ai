@@ -21,6 +21,31 @@ class ModelServerClient:
         )
         self._client = client
 
+    def process_invoice(
+        self,
+        *,
+        invoice_id: str,
+        tenant_id: str,
+        file_name: str,
+        storage_key: str,
+        text: str,
+        risk_features: dict[str, Any] | None = None,
+        pipeline_context: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "invoice_id": invoice_id,
+            "tenant_id": tenant_id,
+            "file_name": file_name,
+            "storage_key": storage_key,
+            "text": text,
+            "context": pipeline_context or {},
+        }
+
+        if risk_features is not None:
+            payload["risk_features"] = risk_features
+
+        return self._post("/process-invoice", payload)
+
     def extract_invoice(
         self,
         *,
