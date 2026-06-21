@@ -15,12 +15,25 @@ class User:
     created_at: datetime = datetime.now(UTC)
 
     @property
+    def is_platform_admin(self) -> bool:
+        return self.role == UserRole.PLATFORM_ADMIN
+
+    @property
+    def can_manage_platform(self) -> bool:
+        return self.is_platform_admin
+
+    @property
     def can_manage_tenant(self) -> bool:
-        return self.role in {UserRole.TENANT_ADMIN, UserRole.MANAGER}
+        return self.role in {
+            UserRole.PLATFORM_ADMIN,
+            UserRole.TENANT_ADMIN,
+            UserRole.MANAGER,
+        }
 
     @property
     def can_review_drafts(self) -> bool:
         return self.role in {
+            UserRole.PLATFORM_ADMIN,
             UserRole.TENANT_ADMIN,
             UserRole.MANAGER,
             UserRole.REVIEWER,
@@ -29,6 +42,7 @@ class User:
     @property
     def can_view_audit_logs(self) -> bool:
         return self.role in {
+            UserRole.PLATFORM_ADMIN,
             UserRole.TENANT_ADMIN,
             UserRole.MANAGER,
             UserRole.AUDITOR,

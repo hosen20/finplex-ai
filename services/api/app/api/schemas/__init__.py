@@ -1,4 +1,10 @@
 from app.api.schemas.audit import AuditEventResponse
+from app.api.schemas.auth import (
+    AuthenticatedUserResponse,
+    BootstrapAdminRequest,
+    LoginRequest,
+    TokenResponse,
+)
 from app.api.schemas.customer import CustomerCreateRequest, CustomerResponse
 from app.api.schemas.invoice import (
     InvoiceCreateRequest,
@@ -11,24 +17,26 @@ from app.api.schemas.review import (
     ReviewRejectRequest,
     ReviewResponse,
 )
-from app.api.schemas.tenant import (
-    TenantActionRequest,
-    TenantCreateRequest,
-    TenantResponse,
-)
+from app.api.schemas.tenant import TenantCreateRequest, TenantResponse
+from app.api.schemas.user import UserCreateRequest, UserResponse
 
 __all__ = [
     "AuditEventResponse",
+    "AuthenticatedUserResponse",
+    "BootstrapAdminRequest",
     "CustomerCreateRequest",
     "CustomerResponse",
     "InvoiceCreateRequest",
     "InvoiceResponse",
     "InvoiceUploadResponse",
+    "LoginRequest",
     "ReviewCreateRequest",
     "ReviewDecisionRequest",
     "ReviewRejectRequest",
     "ReviewResponse",
-    "TenantActionRequest",
     "TenantCreateRequest",
     "TenantResponse",
+    "TokenResponse",
+    "UserCreateRequest",
+    "UserResponse",
 ]

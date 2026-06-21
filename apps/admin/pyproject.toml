@@ -1,0 +1,15 @@
+[project]
+name = "finplex-admin"
+version = "0.1.0"
+description = "Streamlit platform admin console for Finplex AI."
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.28,<0.29",
+    "streamlit>=1.41,<2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3,<9",
+    "ruff>=0.8,<0.9",
+]

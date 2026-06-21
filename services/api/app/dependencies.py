@@ -59,3 +59,15 @@ def require_roles(*allowed_roles: UserRole) -> Callable[[UserModel], UserModel]:
         return current_user
 
     return dependency
+
+
+def require_platform_admin(
+    current_user: UserModel = Depends(get_current_user),
+) -> UserModel:
+    if current_user.role != UserRole.PLATFORM_ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only platform admins can perform this action.",
+        )
+
+    return current_user

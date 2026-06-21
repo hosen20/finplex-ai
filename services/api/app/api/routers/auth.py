@@ -5,7 +5,6 @@ from app.api.schemas.auth import (
     TokenResponse,
 )
 from app.application.services.auth_service import AuthService
-from app.application.services.user_service import UserService
 from app.database import get_db_session
 from app.dependencies import get_current_user
 from app.infrastructure.db.models.user_model import UserModel
@@ -45,10 +44,11 @@ def bootstrap_admin(
     payload: BootstrapAdminRequest,
     session: Session = Depends(get_db_session),
 ):
-    service = UserService(session)
-    return service.bootstrap_tenant_admin(
-        tenant_id=payload.tenant_id,
-        email=payload.email,
-        full_name=payload.full_name,
-        password=payload.password,
+    raise HTTPException(
+        status_code=status.HTTP_410_GONE,
+        detail=(
+            "Unauthenticated tenant bootstrap is disabled. Use "
+            "scripts/bootstrap-platform-admin.py and create tenants from the "
+            "Streamlit Platform Admin app."
+        ),
     )

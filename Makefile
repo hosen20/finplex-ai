@@ -1,4 +1,4 @@
-.PHONY: infra-up infra-down infra-reset api model-server guardrails workers health
+.PHONY: infra-up infra-down infra-reset api admin model-server guardrails workers health
 
 infra-up:
 	./infra/scripts/start-infra.sh
@@ -11,6 +11,9 @@ infra-reset:
 
 api:
 	./scripts/dev-api.sh
+
+admin:
+	./scripts/dev-admin.sh
 
 model-server:
 	./scripts/dev-model-server.sh

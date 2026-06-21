@@ -8,6 +8,7 @@ class TenantStatus(str, Enum):
 
 
 class UserRole(str, Enum):
+    PLATFORM_ADMIN = "platform_admin"
     TENANT_ADMIN = "tenant_admin"
     MANAGER = "manager"
     REVIEWER = "reviewer"
@@ -58,6 +59,7 @@ class EvidenceSource(str, Enum):
 class AuditAction(str, Enum):
     TENANT_CREATED = "tenant_created"
     TENANT_SUSPENDED = "tenant_suspended"
+    TENANT_REACTIVATED = "tenant_reactivated"
     USER_CREATED = "user_created"
     INVOICE_UPLOADED = "invoice_uploaded"
     INVOICE_PROCESSED = "invoice_processed"
