@@ -103,17 +103,22 @@ small {
   margin-bottom: 1rem;
 }
 
-.demo-accounts {
-  align-items: center;
-  border-top: 1px solid #e7e5e4;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+.access-note {
+  align-items: flex-start;
+  background: #fafaf9;
+  border: 1px solid #e7e5e4;
+  border-radius: 1rem;
+  color: #57534e;
+  display: grid;
+  gap: 0.35rem;
   grid-column: 1 / -1;
-  padding-top: 1rem;
+  padding: 1rem;
 }
 
-.demo-accounts button,
+.access-note strong {
+  color: #292524;
+}
+
 .secondary {
   background: #e7e5e4;
   color: #292524;
@@ -225,7 +230,7 @@ small {
 .metric-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .metric-card,
@@ -312,25 +317,18 @@ small {
   color: #44403c;
 }
 
-.demo-files {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr 1fr;
-}
-
-.demo-files div {
+.info-panel {
   background: #fafaf9;
   border: 1px dashed #c7c2bc;
   border-radius: 1rem;
+  color: #57534e;
   display: grid;
   gap: 0.35rem;
   padding: 1rem;
 }
 
-.demo-files span {
+.info-panel strong {
   color: #292524;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.85rem;
 }
 
 .upload-form {
@@ -408,7 +406,7 @@ small {
   border-radius: 1rem;
   display: grid;
   gap: 1rem;
-  grid-template-columns: 2fr auto auto auto;
+  grid-template-columns: 2fr auto auto auto auto;
   padding: 0.9rem;
 }
 
@@ -422,7 +420,6 @@ small {
   .login-card,
   .two-column,
   .metric-grid,
-  .demo-files,
   .upload-form,
   .table-row {
     grid-template-columns: 1fr;
@@ -435,5 +432,47 @@ small {
   .topbar {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+.review-meta,
+.customer-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.customer-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.customer-facts span {
+  background: #fafaf9;
+  border: 1px solid #e7e5e4;
+  border-radius: 999px;
+  color: #44403c;
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 0.35rem 0.65rem;
+}
+
+.user-form {
+  align-items: end;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+}
+
+.users-row {
+  grid-template-columns: 2fr auto auto auto;
+}
+
+@media (max-width: 1100px) {
+  .metric-grid,
+  .user-form {
+    grid-template-columns: 1fr 1fr;
   }
 }

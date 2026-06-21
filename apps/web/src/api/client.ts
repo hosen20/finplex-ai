@@ -5,12 +5,17 @@ const DEFAULT_API_BASE_URL = "http://localhost:8000";
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || DEFAULT_API_BASE_URL;
 
-export const DEMO_TENANT_ID =
-  import.meta.env.VITE_DEMO_TENANT_ID || "tenant_demo_clinic";
-
 export type ApiSession = {
   accessToken: string;
   user: User;
+};
+
+export type CreateUserInput = {
+  tenantId: string;
+  email: string;
+  fullName: string;
+  password: string;
+  role: string;
 };
 
 class ApiError extends Error {
@@ -26,7 +31,7 @@ function friendlyError(status: number, detail: unknown): string {
   }
 
   if (Array.isArray(detail)) {
-    return "Please check the highlighted fields and try again.";
+    return "Please check the form fields and try again.";
   }
 
   if (status === 401) {
@@ -95,37 +100,75 @@ export async function login(email: string, password: string): Promise<ApiSession
   };
 }
 
-export async function listCustomers(token: string): Promise<Customer[]> {
+export async function listCustomers(
+  token: string,
+  tenantId: string,
+): Promise<Customer[]> {
   return request<Customer[]>(
-    `/customers?tenant_id=${encodeURIComponent(DEMO_TENANT_ID)}`,
+    `/customers?tenant_id=${encodeURIComponent(tenantId)}`,
     {},
     token,
   );
 }
 
-export async function listInvoices(token: string): Promise<Invoice[]> {
+export async function listInvoices(
+  token: string,
+  tenantId: string,
+): Promise<Invoice[]> {
   return request<Invoice[]>(
-    `/invoices?tenant_id=${encodeURIComponent(DEMO_TENANT_ID)}`,
+    `/invoices?tenant_id=${encodeURIComponent(tenantId)}`,
     {},
     token,
   );
 }
 
-export async function listPendingReviews(token: string): Promise<Review[]> {
+export async function listPendingReviews(
+  token: string,
+  tenantId: string,
+): Promise<Review[]> {
   return request<Review[]>(
-    `/reviews/pending?tenant_id=${encodeURIComponent(DEMO_TENANT_ID)}`,
+    `/reviews/pending?tenant_id=${encodeURIComponent(tenantId)}`,
     {},
+    token,
+  );
+}
+
+export async function listUsers(token: string, tenantId: string): Promise<User[]> {
+  return request<User[]>(
+    `/users?tenant_id=${encodeURIComponent(tenantId)}`,
+    {},
+    token,
+  );
+}
+
+export async function createTenantUser(
+  token: string,
+  input: CreateUserInput,
+): Promise<User> {
+  return request<User>(
+    "/users",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        tenant_id: input.tenantId,
+        email: input.email,
+        full_name: input.fullName,
+        password: input.password,
+        role: input.role,
+      }),
+    },
     token,
   );
 }
 
 export async function uploadInvoice(
   token: string,
+  tenantId: string,
   file: File,
   customerId: string,
 ): Promise<UploadResponse> {
   const formData = new FormData();
-  formData.append("tenant_id", DEMO_TENANT_ID);
+  formData.append("tenant_id", tenantId);
   formData.append("customer_id", customerId);
   formData.append("file", file);
 
