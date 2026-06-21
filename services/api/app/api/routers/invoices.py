@@ -7,7 +7,7 @@ from app.application.services.invoice_service import InvoiceService
 from app.application.services.invoice_upload_service import InvoiceUploadService
 from app.config import settings
 from app.database import get_db_session
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, resolve_tenant_scope
 from app.infrastructure.db.models.user_model import UserModel
 from app.infrastructure.messaging.event_publisher import (
     EventPublisher,
@@ -25,7 +25,7 @@ router = APIRouter(prefix="/invoices", tags=["invoices"])
 
 @router.post("/upload", response_model=InvoiceUploadResponse)
 async def upload_invoice(
-    tenant_id: str = Form(...),
+    tenant_id: str | None = Form(None),
     customer_id: str | None = Form(None),
     file: UploadFile = File(...),
     current_user: UserModel = Depends(get_current_user),
@@ -33,13 +33,14 @@ async def upload_invoice(
     storage: InvoiceStorage = Depends(get_invoice_storage),
     event_publisher: EventPublisher = Depends(get_event_publisher),
 ):
+    resolved_tenant_id = resolve_tenant_scope(current_user, tenant_id)
     service = InvoiceUploadService(
         session=session,
         storage=storage,
         event_publisher=event_publisher,
     )
     result = service.upload_invoice_file(
-        tenant_id=tenant_id,
+        tenant_id=resolved_tenant_id,
         actor_user_id=current_user.user_id,
         customer_id=customer_id,
         file_name=file.filename or "invoice.bin",
@@ -61,9 +62,10 @@ def create_invoice(
     current_user: UserModel = Depends(get_current_user),
     session: Session = Depends(get_db_session),
 ):
+    tenant_id = resolve_tenant_scope(current_user, payload.tenant_id)
     service = InvoiceService(session)
     return service.create_invoice_metadata(
-        tenant_id=payload.tenant_id,
+        tenant_id=tenant_id,
         actor_user_id=current_user.user_id,
         file_name=payload.file_name,
         storage_key=payload.storage_key,
@@ -74,12 +76,13 @@ def create_invoice(
 
 @router.get("", response_model=list[InvoiceResponse])
 def list_invoices(
-    tenant_id: str = Query(...),
+    tenant_id: str | None = Query(None),
     current_user: UserModel = Depends(get_current_user),
     session: Session = Depends(get_db_session),
 ):
+    resolved_tenant_id = resolve_tenant_scope(current_user, tenant_id)
     service = InvoiceService(session)
     return service.list_invoices(
-        tenant_id=tenant_id,
+        tenant_id=resolved_tenant_id,
         actor_user_id=current_user.user_id,
     )

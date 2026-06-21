@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class InvoiceCreateRequest(BaseModel):
-    tenant_id: str
+    tenant_id: str | None = None
     file_name: str
     storage_key: str
     customer_id: str | None = None

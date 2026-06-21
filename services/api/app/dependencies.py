@@ -71,3 +71,38 @@ def require_platform_admin(
         )
 
     return current_user
+
+
+def resolve_tenant_scope(
+    current_user: UserModel,
+    requested_tenant_id: str | None = None,
+    *,
+    require_platform_tenant: bool = True,
+) -> str:
+    """Resolve the tenant a request is allowed to operate on.
+
+    Tenant-facing API routes must not trust tenant_id values sent by the React
+    app. Normal tenant users are always scoped to the tenant stored in their
+    JWT-backed user record. Platform admins may specify a tenant_id for internal
+    admin workflows such as creating the first tenant admin from Streamlit.
+    """
+
+    if current_user.role == UserRole.PLATFORM_ADMIN:
+        if requested_tenant_id:
+            return requested_tenant_id
+
+        if require_platform_tenant:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Platform admin requests must include a tenant_id.",
+            )
+
+        return current_user.tenant_id
+
+    if requested_tenant_id and requested_tenant_id != current_user.tenant_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You cannot access another tenant's data.",
+        )
+
+    return current_user.tenant_id

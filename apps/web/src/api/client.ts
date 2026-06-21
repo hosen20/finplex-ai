@@ -102,43 +102,27 @@ export async function login(email: string, password: string): Promise<ApiSession
 
 export async function listCustomers(
   token: string,
-  tenantId: string,
+  _tenantId: string,
 ): Promise<Customer[]> {
-  return request<Customer[]>(
-    `/customers?tenant_id=${encodeURIComponent(tenantId)}`,
-    {},
-    token,
-  );
+  return request<Customer[]>("/customers", {}, token);
 }
 
 export async function listInvoices(
   token: string,
-  tenantId: string,
+  _tenantId: string,
 ): Promise<Invoice[]> {
-  return request<Invoice[]>(
-    `/invoices?tenant_id=${encodeURIComponent(tenantId)}`,
-    {},
-    token,
-  );
+  return request<Invoice[]>("/invoices", {}, token);
 }
 
 export async function listPendingReviews(
   token: string,
-  tenantId: string,
+  _tenantId: string,
 ): Promise<Review[]> {
-  return request<Review[]>(
-    `/reviews/pending?tenant_id=${encodeURIComponent(tenantId)}`,
-    {},
-    token,
-  );
+  return request<Review[]>("/reviews/pending", {}, token);
 }
 
-export async function listUsers(token: string, tenantId: string): Promise<User[]> {
-  return request<User[]>(
-    `/users?tenant_id=${encodeURIComponent(tenantId)}`,
-    {},
-    token,
-  );
+export async function listUsers(token: string, _tenantId: string): Promise<User[]> {
+  return request<User[]>("/users", {}, token);
 }
 
 export async function createTenantUser(
@@ -150,7 +134,6 @@ export async function createTenantUser(
     {
       method: "POST",
       body: JSON.stringify({
-        tenant_id: input.tenantId,
         email: input.email,
         full_name: input.fullName,
         password: input.password,
@@ -163,12 +146,11 @@ export async function createTenantUser(
 
 export async function uploadInvoice(
   token: string,
-  tenantId: string,
+  _tenantId: string,
   file: File,
   customerId: string,
 ): Promise<UploadResponse> {
   const formData = new FormData();
-  formData.append("tenant_id", tenantId);
   formData.append("customer_id", customerId);
   formData.append("file", file);
 

@@ -6,8 +6,7 @@ from app.api.schemas.review import (
 )
 from app.application.services.review_service import ReviewService
 from app.database import get_db_session
-from app.dependencies import get_current_user
-from app.domain.exceptions import CrossTenantAccessError
+from app.dependencies import get_current_user, resolve_tenant_scope
 from app.infrastructure.db.models.user_model import UserModel
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
@@ -21,15 +20,10 @@ def create_review(
     current_user: UserModel = Depends(get_current_user),
     session: Session = Depends(get_db_session),
 ):
-    if current_user.tenant_id != payload.tenant_id:
-        raise CrossTenantAccessError(
-            f"User {current_user.user_id} cannot create reviews "
-            f"for tenant {payload.tenant_id}."
-        )
-
+    tenant_id = resolve_tenant_scope(current_user, payload.tenant_id)
     service = ReviewService(session)
     return service.create_review(
-        tenant_id=payload.tenant_id,
+        tenant_id=tenant_id,
         invoice_id=payload.invoice_id,
         draft_message=payload.draft_message,
         risk_level=payload.risk_level,
@@ -40,13 +34,14 @@ def create_review(
 
 @router.get("/pending", response_model=list[ReviewResponse])
 def list_pending_reviews(
-    tenant_id: str = Query(...),
+    tenant_id: str | None = Query(None),
     current_user: UserModel = Depends(get_current_user),
     session: Session = Depends(get_db_session),
 ):
+    resolved_tenant_id = resolve_tenant_scope(current_user, tenant_id)
     service = ReviewService(session)
     return service.list_pending_reviews(
-        tenant_id=tenant_id,
+        tenant_id=resolved_tenant_id,
         actor_user_id=current_user.user_id,
     )
 

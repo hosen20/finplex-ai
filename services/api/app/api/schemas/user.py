@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class UserCreateRequest(BaseModel):
-    tenant_id: str
+    tenant_id: str | None = None
     email: EmailStr
     full_name: str
     password: str
