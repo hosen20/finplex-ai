@@ -128,7 +128,7 @@ make infra-up
 cd services/api
 uv run alembic -c alembic.ini upgrade head
 cd ../..
-bash scripts/seed-local-data.sh
+bash scripts/seed-local-data.sh --reset-product-tenants
 ```
 
 ## Pre-PR Verification

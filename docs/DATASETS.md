@@ -1,69 +1,79 @@
 # Datasets
 
-Finplex AI uses privacy-safe local data for invoice intelligence, customer context, payment history, and AI evaluation.
+Finplex AI runs locally with privacy-safe datasets. The product does not require
+live ERP or CRM credentials to be reviewed.
 
-## Data Sources
+## Dataset Inputs
 
-| Data type | Purpose |
+| File | Product role |
 |---|---|
-| Invoice images/PDFs | OCR and structured invoice extraction |
-| ERP-style invoices | Amounts, due dates, balances, payment status |
-| ERP-style payments | Payment history and partial payment signals |
-| CRM-style notes | Customer context and previous interactions |
-| CRM-style disputes | Risk signals and evidence for careful follow-up |
-| Policy documents | Retrieval and guardrails evidence |
-| IBM customer dataset | Customer-risk and churn-style features for realistic account behavior |
-| Synthetic records | Privacy-safe local product testing |
+| `data/seed/crm_customers.csv` | Customer-level payment behavior and CRM-like risk signals. |
+| `data/seed/historical_erp_invoices.csv` | ERP invoice history, due dates, amounts, payment terms, and dispute flags. |
+| `data/seed/historical_erp_payments.csv` | ERP payment settlement history. |
+| `data/seed/new_uploaded_invoice_ground_truth.csv` | Expected fields for generated invoice images. |
+| `data/demo_invoices/new_uploaded_invoices/*.png` | Local invoice images used for upload and extraction testing. |
+| `regulations/**` | Policy and governance documents seeded into tenant RAG. |
 
-## Folder Policy
+The customer and payment tables are derived from a public, IBM-style customer
+payment dataset preparation workflow. The invoice images are generated local
+invoice files used for OCR and extraction testing. The project stores only
+privacy-safe local records.
 
-```text
-data/external     raw downloaded datasets kept locally
-data/processed    cleaned files produced from notebooks or scripts
-data/seed         small seed files used by local setup
-data/golden       expected outputs for evaluation cases
-```
+## Seeding Command
 
-Raw downloaded datasets should stay in `data/external/` and should not be committed unless they are small, license-safe, and necessary for reproduction.
-
-## Seeding
-
-Run:
+Run the seed command after infrastructure is running and migrations are applied:
 
 ```bash
 bash scripts/seed-local-data.sh
 ```
 
-The seed flow should prepare:
+The command is idempotent. It creates or updates:
 
-- tenants
-- users
-- customers
-- ERP invoices
-- ERP payments
-- CRM notes
-- CRM disputes
-- invoice records
-- policy documents
-- RAG chunks
-- review queue items
-- audit events
+- two local product tenants,
+- tenant admins, managers, reviewers, and auditors,
+- customers imported from the prepared customer dataset,
+- ERP invoices and payments,
+- CRM notes and dispute records,
+- RAG policy documents and chunks,
+- review-ready invoice records with evidence and audit events.
 
-## Dataset Design Rules
+For a clean reseed of only the product tenants:
 
-- Do not include private customer data.
-- Prefer public or synthetic records.
-- Keep seed data small enough for fast local setup.
-- Keep raw datasets separate from processed seed data.
-- Document transformations in notebooks or scripts.
-- Make evaluation cases deterministic.
+```bash
+bash scripts/seed-local-data.sh --reset-product-tenants
+```
 
-## Evaluation Sets
+This reset does not delete the platform admin account.
 
-Golden sets should cover:
+## Seeded Accounts
 
-- invoice extraction fields
-- retrieval hit quality
-- risk score expectations
-- guardrails policy outcomes
-- end-to-end invoice-to-review workflow
+Platform admin:
+
+```text
+platform.admin@finplexai.com / FinplexAdmin123!
+```
+
+Cedar Finance tenant users:
+
+```text
+tenant_admin@cedarfinance.com / TenantAdmin123!
+manager@cedarfinance.com / TenantAdmin123!
+reviewer@cedarfinance.com / TenantAdmin123!
+auditor@cedarfinance.com / TenantAdmin123!
+```
+
+Orion Medical tenant users:
+
+```text
+tenant_admin@orionmedical.com / TenantAdmin123!
+manager@orionmedical.com / TenantAdmin123!
+reviewer@orionmedical.com / TenantAdmin123!
+auditor@orionmedical.com / TenantAdmin123!
+```
+
+## Review Notes
+
+The local seed intentionally creates two tenants so reviewers can verify tenant
+isolation. The React tenant workspace should show only the logged-in tenant's
+customers, invoices, reviews, and evidence. The Streamlit Platform Admin can see
+and manage both tenants.

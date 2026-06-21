@@ -123,7 +123,7 @@ uv run --project services/api python scripts/bootstrap-platform-admin.py \
   --password "FinplexAdmin123!"
 ```
 
-Seed local sample data:
+Seed local product data:
 
 ```bash
 bash scripts/seed-local-data.sh
@@ -189,18 +189,18 @@ http://localhost:5173
 
 ## First Product Walkthrough
 
-1. Log in to Streamlit as the platform admin.
-2. Create a tenant, for example `Cedar Finance Group`.
-3. Create the first `tenant_admin` for that tenant.
+1. Run `bash scripts/seed-local-data.sh`.
+2. Log in to Streamlit as `platform.admin@finplexai.com`.
+3. Confirm the seeded tenants `Cedar Finance Group` and `Orion Medical Billing`.
 4. Open the React workspace.
-5. Sign in as the tenant admin.
-6. Create tenant users such as manager and reviewer.
-7. Upload an invoice.
-8. Wait for the invoice processing job.
-9. Open the review queue.
-10. Inspect extracted invoice fields, ERP facts, CRM notes, evidence, risk score, guardrails status, and draft.
-11. Approve, edit, or reject the draft.
-12. Review the audit trail.
+5. Sign in as `tenant_admin@cedarfinance.com`.
+6. Create or inspect tenant users such as manager and reviewer.
+7. Open invoices, customer intelligence, review queue, and evidence.
+8. Inspect extracted invoice fields, ERP facts, CRM notes, evidence, risk score, guardrails status, and draft.
+9. Approve, edit, or reject the draft.
+10. Review the audit trail.
+
+Seeded tenant users use this local password: `TenantAdmin123!`.
 
 ## Useful Commands
 
