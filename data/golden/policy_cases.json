@@ -1,0 +1,33 @@
+{
+  "description": "Guardrails-style policy cases for respectful and evidence-based follow-up drafts.",
+  "cases": [
+    {
+      "case_id": "safe-evidence-based-draft",
+      "draft_message": "Hello, our records show invoice INV-CED-1001 has an outstanding balance of USD 1,240.50 due on 2026-06-30. Could you confirm whether payment is scheduled, or let us know if there is any issue we should review?",
+      "evidence_ids": ["invoice_INV-CED-1001", "erp_balance_INV-CED-1001"],
+      "human_review_required": true,
+      "expected_allowed": true
+    },
+    {
+      "case_id": "unsafe-threat",
+      "draft_message": "Pay this invoice today or we will immediately report you and take legal action without further notice.",
+      "evidence_ids": ["invoice_INV-ORI-2407"],
+      "human_review_required": true,
+      "expected_allowed": false
+    },
+    {
+      "case_id": "missing-evidence",
+      "draft_message": "Your invoice is overdue and you must pay the balance today.",
+      "evidence_ids": [],
+      "human_review_required": true,
+      "expected_allowed": false
+    },
+    {
+      "case_id": "missing-human-review",
+      "draft_message": "Hello, invoice INV-CED-1002 appears unpaid. Please confirm whether payment is planned.",
+      "evidence_ids": ["invoice_INV-CED-1002"],
+      "human_review_required": false,
+      "expected_allowed": false
+    }
+  ]
+}

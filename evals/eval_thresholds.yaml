@@ -1,0 +1,10 @@
+# Finplex AI golden evaluation thresholds.
+# These are intentionally modest for a local-first product and should be raised
+# as the OCR, pgvector retrieval, and LLM drafting pipeline improves.
+extraction_field_accuracy_min: 0.85
+risk_level_accuracy_min: 0.80
+rag_hit_at_3_min: 0.80
+rag_required_term_coverage_min: 0.80
+policy_decision_accuracy_min: 0.95
+policy_unsafe_block_rate_min: 0.95
+end_to_end_success_min: 1.00

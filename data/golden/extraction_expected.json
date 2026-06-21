@@ -1,0 +1,44 @@
+{
+  "description": "Small deterministic invoice extraction golden set used by CI.",
+  "cases": [
+    {
+      "case_id": "cedar-invoice-1001",
+      "ocr_text": "Invoice INV-CED-1001\nSupplier: Cedar Office Supplies\nCustomer: Cedar Finance Group\nInvoice Date: 2026-06-01\nDue Date: 2026-06-30\nTotal Amount: USD 1240.50",
+      "expected": {
+        "invoice_number": "INV-CED-1001",
+        "supplier": "Cedar Office Supplies",
+        "customer": "Cedar Finance Group",
+        "invoice_date": "2026-06-01",
+        "due_date": "2026-06-30",
+        "currency": "USD",
+        "total_amount": "1240.50"
+      }
+    },
+    {
+      "case_id": "orion-invoice-2407",
+      "ocr_text": "INVOICE NO: INV-ORI-2407\nSupplier: Orion Diagnostics Lab\nBill To: Orion Medical Billing\nInvoice Date: 2026-05-18\nPayment Due: 2026-06-17\nAmount Due: $2860.00",
+      "expected": {
+        "invoice_number": "INV-ORI-2407",
+        "supplier": "Orion Diagnostics Lab",
+        "customer": "Orion Medical Billing",
+        "invoice_date": "2026-05-18",
+        "due_date": "2026-06-17",
+        "currency": "USD",
+        "total_amount": "2860.00"
+      }
+    },
+    {
+      "case_id": "cedar-invoice-1002",
+      "ocr_text": "Invoice Number: INV-CED-1002\nVendor: Cedar Telecom Services\nCustomer: Cedar Finance Group\nInvoice Date: 2026-04-25\nDue Date: 2026-05-25\nBalance Due: USD 920.00",
+      "expected": {
+        "invoice_number": "INV-CED-1002",
+        "supplier": "Cedar Telecom Services",
+        "customer": "Cedar Finance Group",
+        "invoice_date": "2026-04-25",
+        "due_date": "2026-05-25",
+        "currency": "USD",
+        "total_amount": "920.00"
+      }
+    }
+  ]
+}

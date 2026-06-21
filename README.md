@@ -57,7 +57,7 @@ docs              Architecture, setup, security, runbook, and review docs
 | Data | PostgreSQL, pgvector, Redis, MinIO |
 | Events | Apache Kafka, Zookeeper |
 | AI | OCR, ML risk model, retrieval, LLM drafting, guardrails |
-| Quality | pytest, ruff, TypeScript build, golden evals |
+| Quality | pytest, ruff, TypeScript build, golden evals, GitHub Actions |
 
 ## Prerequisites
 
@@ -187,122 +187,65 @@ Open:
 http://localhost:5173
 ```
 
-## First Product Walkthrough
+## Seeded Product Accounts
 
-1. Run `bash scripts/seed-local-data.sh`.
-2. Log in to Streamlit as `platform.admin@finplexai.com`.
-3. Confirm the seeded tenants `Cedar Finance Group` and `Orion Medical Billing`.
-4. Open the React workspace.
-5. Sign in as `tenant_admin@cedarfinance.com`.
-6. Create or inspect tenant users such as manager and reviewer.
-7. Open invoices, customer intelligence, review queue, and evidence.
-8. Inspect extracted invoice fields, ERP facts, CRM notes, evidence, risk score, guardrails status, and draft.
-9. Approve, edit, or reject the draft.
-10. Review the audit trail.
+Platform admin:
 
-Seeded tenant users use this local password: `TenantAdmin123!`.
-
-## Useful Commands
-
-Check local services:
-
-```bash
-make health
+```text
+platform.admin@finplexai.com / FinplexAdmin123!
 ```
 
-Run API tests:
+Tenant users created by the local seed command:
 
-```bash
-uv run --project services/api pytest tests/unit
+```text
+tenant_admin@cedarfinance.com / TenantAdmin123!
+manager@cedarfinance.com / TenantAdmin123!
+reviewer@cedarfinance.com / TenantAdmin123!
+
+tenant_admin@orionmedical.com / TenantAdmin123!
+manager@orionmedical.com / TenantAdmin123!
+reviewer@orionmedical.com / TenantAdmin123!
 ```
 
-Run API linting:
+## Quality Gate
+
+Run the same checks used by CI:
 
 ```bash
-uv run --project services/api ruff check services/api tests
+bash scripts/check-secrets.sh
+bash scripts/lint.sh
+bash scripts/test.sh
+bash scripts/run-evals.sh
 ```
 
-Build React:
+The GitHub Actions workflow is defined in:
 
-```bash
-cd apps/web
-npm run build
-cd ../..
+```text
+.github/workflows/ci.yml
 ```
 
-Compile Streamlit files:
+The golden evaluation thresholds are defined in:
 
-```bash
-uv run --project apps/admin python -m py_compile \
-  apps/admin/app.py \
-  apps/admin/finplex_admin/client.py
+```text
+evals/eval_thresholds.yaml
 ```
-
-Stop infrastructure:
-
-```bash
-make infra-down
-```
-
-Reset infrastructure:
-
-```bash
-make infra-reset
-```
-
-## Authentication And Roles
-
-| Role | Product area | Main permissions |
-|---|---|---|
-| platform_admin | Streamlit admin | Create tenants, create tenant admins, manage tenant status |
-| tenant_admin | React workspace | Manage tenant users and tenant operations |
-| manager | React workspace | View invoices, customers, AI review queue, and decisions |
-| reviewer | React workspace | Review, approve, edit, and reject AI drafts |
-| auditor | React workspace | Read audit and decision history |
-
-## Tenant Isolation
-
-Every important record is scoped by `tenant_id`: users, customers, invoices, ERP records, CRM records, RAG documents, reviews, audit events, Kafka events, cache keys, and file paths. The backend must derive tenant scope from the authenticated user, not from user-controlled input.
-
-## Data And AI
-
-Finplex AI uses privacy-safe local data:
-
-- invoice images and PDFs for upload and OCR-style extraction
-- ERP-style invoice and payment records
-- CRM-style notes, disputes, contacts, and relationship status
-- policy documents for retrieval and guardrail checks
-- trained risk model artifacts in `models/`
-- notebooks that explain training and evaluation work
-
-Raw downloaded datasets should be placed in `data/external/` locally and should not be committed unless they are small, license-safe, and necessary for reproduction.
 
 ## Documentation
 
 Start here:
 
-- `docs/LOCAL_SETUP.md` for setup and running steps
-- `docs/ARCHITECTURE.md` for system design
-- `docs/STREAMLIT_ADMIN.md` for platform admin usage
-- `docs/TENANT_WEB_APP.md` for tenant workspace usage
-- `docs/AI_PIPELINE.md` for OCR, retrieval, ML, LLM, and guardrails flow
-- `docs/SECURITY.md` for tenant isolation and security rules
-- `docs/EVALUATIONS.md` for quality gates and golden sets
-- `docs/RUNBOOK.md` for troubleshooting
-- `docs/PROJECT_REVIEW_GUIDE.md` for reviewer navigation
+```text
+docs/PROJECT_REVIEW_GUIDE.md
+docs/LOCAL_SETUP.md
+docs/ARCHITECTURE.md
+docs/STREAMLIT_ADMIN.md
+docs/TENANT_WEB_APP.md
+docs/CI_CD.md
+docs/EVALUATIONS.md
+docs/SECURITY.md
+docs/RUNBOOK.md
+```
 
-## Repository Hygiene
+## Product Scope
 
-Do not commit:
-
-- `.env`
-- generated frontend builds
-- dependency folders
-- Python cache files
-- large raw datasets
-- model provider secrets
-- local database or object storage files
-
-## Current Product Scope
-
-Finplex AI is focused on a complete local SaaS experience: platform administration, tenant workspace, invoice intelligence, evidence retrieval, responsible AI drafting, human approval, and auditability.
+Finplex AI is currently a local-first product. It is designed to be reviewed, run, and tested locally with Docker infrastructure and local services. Public sign-up is intentionally not included because tenant onboarding is controlled by the Streamlit Platform Admin console.

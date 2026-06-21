@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  quality-gate:
+    name: Lint, tests, builds, and evals
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Python dependencies
+        run: |
+          uv sync --project services/api --all-groups
+          uv sync --project services/model-server --all-groups
+          uv sync --project services/guardrails --all-groups
+          uv sync --project services/workers --all-groups
+          uv sync --project apps/admin --all-groups
+
+      - name: Install React dependencies
+        working-directory: apps/web
+        run: npm ci
+
+      - name: Secret scan
+        run: bash scripts/check-secrets.sh
+
+      - name: Lint and frontend build
+        run: bash scripts/lint.sh
+
+      - name: Tests
+        run: bash scripts/test.sh
+
+      - name: Golden evaluations
+        run: bash scripts/run-evals.sh
