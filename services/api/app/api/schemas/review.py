@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class ReviewCreateRequest(BaseModel):
-    tenant_id: str
+    tenant_id: str | None = None
     invoice_id: str
     draft_message: str
     risk_level: RiskLevel

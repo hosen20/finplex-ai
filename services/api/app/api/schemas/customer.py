@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class CustomerCreateRequest(BaseModel):
-    tenant_id: str
+    tenant_id: str | None = None
     company_name: str
     contact_name: str
     contact_email: str
