@@ -2,7 +2,6 @@ import os
 from typing import Any
 
 import streamlit as st
-
 from finplex_admin.client import AdminApiError, FinplexAdminClient
 
 DEFAULT_API_URL = "http://localhost:8000"

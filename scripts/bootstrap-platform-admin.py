@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa: E402, I001
 """Create or update the first local platform admin for Finplex AI.
 
 This is intentionally a CLI-only bootstrap. The React product has no public
@@ -24,8 +25,12 @@ from app.database import SessionLocal  # noqa: E402
 from app.domain.enums import TenantStatus, UserRole  # noqa: E402
 from app.infrastructure.db.models.tenant_model import TenantModel  # noqa: E402
 from app.infrastructure.db.models.user_model import UserModel  # noqa: E402
-from app.infrastructure.db.repositories.tenant_repository import TenantRepository  # noqa: E402
-from app.infrastructure.db.repositories.user_repository import UserRepository  # noqa: E402
+from app.infrastructure.db.repositories.tenant_repository import (
+    TenantRepository,  # noqa: E402
+)
+from app.infrastructure.db.repositories.user_repository import (
+    UserRepository,  # noqa: E402
+)
 from app.security import hash_password  # noqa: E402
 
 PLATFORM_TENANT_ID = "tenant_platform"
