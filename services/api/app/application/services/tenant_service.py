@@ -52,8 +52,35 @@ class TenantService:
         self.session.commit()
         return tenant
 
+    def create_tenant_as_platform_admin(
+        self,
+        *,
+        name: str,
+        erp_provider: str,
+        crm_provider: str,
+        actor_user_id: str,
+    ) -> TenantModel:
+        actor = self._get_user_or_raise(actor_user_id)
+        TenantPolicy.ensure_can_manage_platform(user_model_to_domain(actor))
+
+        return self.create_tenant(
+            name=name,
+            erp_provider=erp_provider,
+            crm_provider=crm_provider,
+            actor_user_id=actor_user_id,
+        )
+
     def list_tenants(self) -> list[TenantModel]:
         return self.tenants.list_all()
+
+    def list_tenants_as_platform_admin(
+        self,
+        *,
+        actor_user_id: str,
+    ) -> list[TenantModel]:
+        actor = self._get_user_or_raise(actor_user_id)
+        TenantPolicy.ensure_can_manage_platform(user_model_to_domain(actor))
+        return self.list_tenants()
 
     def suspend_tenant(self, *, tenant_id: str, actor_user_id: str) -> TenantModel:
         tenant = self._get_tenant_or_raise(tenant_id)
@@ -95,6 +122,14 @@ class TenantService:
 
         tenant.status = domain_tenant.status
         tenant.updated_at = domain_tenant.updated_at
+
+        self.audit.record(
+            tenant_id=tenant.tenant_id,
+            action=AuditAction.TENANT_REACTIVATED,
+            actor_user_id=actor_user_id,
+            entity_type="tenant",
+            entity_id=tenant.tenant_id,
+        )
 
         self.session.commit()
         return tenant

@@ -6,6 +6,7 @@ requires-python = ">=3.11"
 
 [tool.uv.workspace]
 members = [
+    "apps/admin",
     "services/api",
     "services/model-server",
     "services/guardrails",

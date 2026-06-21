@@ -1,0 +1,3 @@
+tenant_id,customer_id,customer_name,invoice_number,amount_due,currency,due_date,payment_status,total_paid,payment_terms_days,demo_outcome
+tenant_demo_clinic,cust_demo_accept,Aurora Medical Supplies,NEW-00001,12450.00,USD,2026-05-30,overdue,0.00,30,approve
+tenant_demo_clinic,cust_demo_reject,Northstar Diagnostics Lab,NEW-00002,7380.00,USD,2026-06-04,disputed,0.00,30,reject

@@ -12,6 +12,9 @@ class TenantPolicy:
 
     @staticmethod
     def ensure_same_tenant(actor: User, tenant_id: str) -> None:
+        if actor.is_platform_admin:
+            return
+
         if actor.tenant_id != tenant_id:
             raise CrossTenantAccessError(
                 f"User {actor.user_id} cannot access tenant {tenant_id}."
@@ -24,4 +27,11 @@ class TenantPolicy:
         if not actor.can_manage_tenant:
             raise PermissionDeniedError(
                 f"User {actor.user_id} cannot manage tenant {tenant_id}."
+            )
+
+    @staticmethod
+    def ensure_can_manage_platform(actor: User) -> None:
+        if not actor.can_manage_platform:
+            raise PermissionDeniedError(
+                f"User {actor.user_id} cannot manage platform tenants."
             )

@@ -1,0 +1,3 @@
+tenant_id,customer_id,customer_name,invoice_number,crm_signal,open_dispute,human_demo_action
+tenant_demo_clinic,cust_demo_accept,Aurora Medical Supplies,NEW-00001,Cooperative slow payer. A respectful factual follow-up is appropriate.,false,approve
+tenant_demo_clinic,cust_demo_reject,Northstar Diagnostics Lab,NEW-00002,Open dispute. Draft must acknowledge the dispute and avoid pressure language.,true,reject

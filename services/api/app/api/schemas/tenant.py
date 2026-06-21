@@ -8,11 +8,6 @@ class TenantCreateRequest(BaseModel):
     name: str
     erp_provider: str = "local"
     crm_provider: str = "local"
-    actor_user_id: str | None = None
-
-
-class TenantActionRequest(BaseModel):
-    actor_user_id: str
 
 
 class TenantResponse(BaseModel):

@@ -196,7 +196,7 @@ def test_process_event_creates_review_and_updates_invoice() -> None:
     review_id = service.process_event(make_event())
 
     assert review_id == "review_1"
-    assert repository.statuses == ["processing", "review_pending"]
+    assert repository.statuses == ["PROCESSING", "REVIEW_PENDING"]
     assert repository.reviews[0]["risk_level"] == "high"
     assert repository.reviews[0]["guardrails_passed"] is True
     assert repository.reviews[0]["evidence_ids"] == [
@@ -244,7 +244,7 @@ def test_process_event_keeps_review_when_guardrails_block() -> None:
 
     assert review_id == "review_1"
     assert repository.reviews[0]["guardrails_passed"] is False
-    assert repository.statuses == ["processing", "review_pending"]
+    assert repository.statuses == ["PROCESSING", "REVIEW_PENDING"]
 
     audit_actions = {audit["action"] for audit in repository.audits}
     assert "evidence_retrieved" in audit_actions

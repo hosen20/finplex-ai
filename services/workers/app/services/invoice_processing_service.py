@@ -143,7 +143,7 @@ class InvoiceProcessingService:
         try:
             self.repository.update_invoice_processing(
                 invoice_id=event.invoice_id,
-                status="processing",
+                status="PROCESSING",
             )
             self.repository.record_audit(
                 tenant_id=event.tenant_id,
@@ -282,7 +282,7 @@ class InvoiceProcessingService:
 
             self.repository.update_invoice_processing(
                 invoice_id=event.invoice_id,
-                status="review_pending",
+                status="REVIEW_PENDING",
                 extracted_fields=extracted_fields,
                 evidence_ids=evidence_ids,
             )
@@ -319,7 +319,7 @@ class InvoiceProcessingService:
     ) -> None:
         self.repository.update_invoice_processing(
             invoice_id=event.invoice_id,
-            status="failed",
+            status="FAILED",
         )
         self.repository.record_audit(
             tenant_id=event.tenant_id,
