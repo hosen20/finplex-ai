@@ -71,13 +71,19 @@ uv run --project services/api python scripts/bootstrap-platform-admin.py \
 
 The command is safe to run again. It creates or updates the local platform admin.
 
-## 7. Seed Local Sample Data
+## 7. Seed Local Product Data
 
 ```bash
 bash scripts/seed-local-data.sh
 ```
 
-This prepares sample tenant data, invoice records, ERP-style payment history, CRM-style notes, policy evidence, review items, and audit examples for local development.
+For a clean reseed of only the product tenants:
+
+```bash
+bash scripts/seed-local-data.sh --reset-product-tenants
+```
+
+This creates two local product tenants, tenant users, customers, ERP invoices, payments, CRM notes, disputes, policy RAG chunks, review-ready invoices, and audit examples.
 
 ## 8. Run Services
 
