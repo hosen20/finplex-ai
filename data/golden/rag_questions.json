@@ -1,0 +1,74 @@
+{
+  "description": "RAG retrieval golden cases for tenant-scoped evidence and policy retrieval.",
+  "cases": [
+    {
+      "case_id": "human-approval-policy",
+      "question": "Can the AI send a payment follow-up without a human reviewer approving it?",
+      "documents": [
+        {
+          "document_id": "policy_human_approval",
+          "title": "Human Approval Policy",
+          "content": "Customer-facing payment follow-up drafts must be reviewed and approved by a human reviewer before they are sent. AI can recommend wording but cannot send the message directly."
+        },
+        {
+          "document_id": "crm_note_contact_preference",
+          "title": "CRM Contact Preference",
+          "content": "The customer prefers email communication and asked finance to avoid phone calls during month-end closing."
+        },
+        {
+          "document_id": "erp_payment_history",
+          "title": "ERP Payment History",
+          "content": "The account paid three recent invoices within seven days of their due dates."
+        }
+      ],
+      "expected_doc_ids": ["policy_human_approval"],
+      "required_terms": ["human", "approved", "sent"]
+    },
+    {
+      "case_id": "tenant-isolation-policy",
+      "question": "Should evidence from another tenant be used when drafting this customer's follow-up?",
+      "documents": [
+        {
+          "document_id": "policy_tenant_isolation",
+          "title": "Tenant Isolation Policy",
+          "content": "Every invoice, customer note, vector chunk, file path, cache key, Kafka event, and audit record is scoped by tenant_id. Cross-tenant evidence must never be retrieved or used."
+        },
+        {
+          "document_id": "policy_tone",
+          "title": "Communication Tone Policy",
+          "content": "Payment follow-ups must remain respectful, factual, and free of harassment or unsupported threats."
+        },
+        {
+          "document_id": "crm_note_dispute",
+          "title": "CRM Dispute Note",
+          "content": "The customer opened a dispute about missing purchase order details on the invoice."
+        }
+      ],
+      "expected_doc_ids": ["policy_tenant_isolation"],
+      "required_terms": ["tenant_id", "cross-tenant", "never"]
+    },
+    {
+      "case_id": "dispute-context",
+      "question": "What evidence explains why this invoice needs careful follow-up?",
+      "documents": [
+        {
+          "document_id": "crm_note_dispute",
+          "title": "CRM Dispute Note",
+          "content": "The customer disputed the invoice because the purchase order was missing and asked for corrected documentation before payment."
+        },
+        {
+          "document_id": "policy_human_approval",
+          "title": "Human Approval Policy",
+          "content": "Customer-facing payment follow-up drafts must be reviewed and approved by a human reviewer before they are sent."
+        },
+        {
+          "document_id": "erp_payment_history",
+          "title": "ERP Payment History",
+          "content": "The account paid three recent invoices within seven days of their due dates."
+        }
+      ],
+      "expected_doc_ids": ["crm_note_dispute"],
+      "required_terms": ["disputed", "purchase", "order"]
+    }
+  ]
+}

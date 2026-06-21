@@ -1,4 +1,4 @@
-.PHONY: infra-up infra-down infra-reset api admin model-server guardrails workers health
+.PHONY: infra-up infra-down infra-reset api admin model-server guardrails workers health lint test evals quality
 
 infra-up:
 	./infra/scripts/start-infra.sh
@@ -26,3 +26,18 @@ workers:
 
 health:
 	./scripts/check-health.sh
+
+lint:
+	./scripts/lint.sh
+
+test:
+	./scripts/test.sh
+
+evals:
+	./scripts/run-evals.sh
+
+quality:
+	./scripts/check-secrets.sh
+	./scripts/lint.sh
+	./scripts/test.sh
+	./scripts/run-evals.sh

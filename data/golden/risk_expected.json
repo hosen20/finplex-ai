@@ -1,0 +1,60 @@
+{
+  "description": "Deterministic risk cases that mirror the product seed data signals.",
+  "cases": [
+    {
+      "case_id": "low-risk-current",
+      "features": {
+        "days_overdue": 0,
+        "amount_due": 480.0,
+        "late_payment_count": 0,
+        "dispute_count": 0,
+        "recent_promises_to_pay": 1
+      },
+      "expected_risk_level": "low"
+    },
+    {
+      "case_id": "medium-risk-overdue",
+      "features": {
+        "days_overdue": 18,
+        "amount_due": 1350.0,
+        "late_payment_count": 2,
+        "dispute_count": 0,
+        "recent_promises_to_pay": 1
+      },
+      "expected_risk_level": "medium"
+    },
+    {
+      "case_id": "high-risk-disputed-large",
+      "features": {
+        "days_overdue": 47,
+        "amount_due": 6800.0,
+        "late_payment_count": 4,
+        "dispute_count": 2,
+        "recent_promises_to_pay": 0
+      },
+      "expected_risk_level": "high"
+    },
+    {
+      "case_id": "high-risk-very-overdue",
+      "features": {
+        "days_overdue": 65,
+        "amount_due": 2100.0,
+        "late_payment_count": 3,
+        "dispute_count": 0,
+        "recent_promises_to_pay": 0
+      },
+      "expected_risk_level": "high"
+    },
+    {
+      "case_id": "medium-risk-dispute-only",
+      "features": {
+        "days_overdue": 8,
+        "amount_due": 750.0,
+        "late_payment_count": 1,
+        "dispute_count": 1,
+        "recent_promises_to_pay": 0
+      },
+      "expected_risk_level": "medium"
+    }
+  ]
+}
