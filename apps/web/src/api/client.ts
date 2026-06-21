@@ -1,53 +1,61 @@
-import type {
-  ApiHealth,
-  Customer,
-  Invoice,
-  Review,
-  Tenant,
-  UploadResult,
-  UserProfile
-} from "../types";
+import type { Customer, Invoice, Review, UploadResponse, User } from "../types";
 
 const DEFAULT_API_BASE_URL = "http://localhost:8000";
 
-export const apiBaseUrl =
+export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || DEFAULT_API_BASE_URL;
 
-export class ApiError extends Error {
-  status: number;
+export const DEMO_TENANT_ID =
+  import.meta.env.VITE_DEMO_TENANT_ID || "tenant_demo_clinic";
 
-  constructor(message: string, status: number) {
+export type ApiSession = {
+  accessToken: string;
+  user: User;
+};
+
+class ApiError extends Error {
+  constructor(message: string) {
     super(message);
     this.name = "ApiError";
-    this.status = status;
   }
 }
 
-async function parseError(response: Response): Promise<string> {
-  try {
-    const payload = await response.json();
-    if (typeof payload.detail === "string") {
-      return payload.detail;
-    }
-    if (Array.isArray(payload.detail)) {
-      return "Please check the highlighted form fields.";
-    }
-  } catch {
-    // ignore JSON parsing errors and use status text below
+function friendlyError(status: number, detail: unknown): string {
+  if (typeof detail === "string") {
+    return detail;
   }
 
-  return response.statusText || "Request failed";
+  if (Array.isArray(detail)) {
+    return "Please check the highlighted fields and try again.";
+  }
+
+  if (status === 401) {
+    return "Login failed. Please check the email and password.";
+  }
+
+  if (status === 403) {
+    return "You do not have permission to perform this action.";
+  }
+
+  if (status === 404) {
+    return "The requested item was not found.";
+  }
+
+  if (status >= 500) {
+    return "The server had a problem. Please check the API terminal logs.";
+  }
+
+  return "The request could not be completed. Please try again.";
 }
 
 async function request<T>(
   path: string,
   options: RequestInit = {},
-  token?: string | null
+  token?: string,
 ): Promise<T> {
   const headers = new Headers(options.headers);
-  const isFormData = options.body instanceof FormData;
 
-  if (!isFormData && !headers.has("Content-Type")) {
+  if (!(options.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -55,115 +63,117 @@ async function request<T>(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const response = await fetch(`${apiBaseUrl}${path}`, {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
-    headers
+    headers,
   });
 
+  const contentType = response.headers.get("content-type") || "";
+  const data = contentType.includes("application/json")
+    ? await response.json()
+    : await response.text();
+
   if (!response.ok) {
-    throw new ApiError(await parseError(response), response.status);
+    const detail = typeof data === "object" && data !== null ? data.detail : data;
+    throw new ApiError(friendlyError(response.status, detail));
   }
 
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
-  return (await response.json()) as T;
+  return data as T;
 }
 
-export const api = {
-  health: () => request<ApiHealth>("/health"),
+export async function login(email: string, password: string): Promise<ApiSession> {
+  const token = await request<{ access_token: string }>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
 
-  login: async (email: string, password: string) => {
-    return request<{ access_token: string; token_type: string }>("/auth/login", {
+  const user = await request<User>("/auth/me", {}, token.access_token);
+
+  return {
+    accessToken: token.access_token,
+    user,
+  };
+}
+
+export async function listCustomers(token: string): Promise<Customer[]> {
+  return request<Customer[]>(
+    `/customers?tenant_id=${encodeURIComponent(DEMO_TENANT_ID)}`,
+    {},
+    token,
+  );
+}
+
+export async function listInvoices(token: string): Promise<Invoice[]> {
+  return request<Invoice[]>(
+    `/invoices?tenant_id=${encodeURIComponent(DEMO_TENANT_ID)}`,
+    {},
+    token,
+  );
+}
+
+export async function listPendingReviews(token: string): Promise<Review[]> {
+  return request<Review[]>(
+    `/reviews/pending?tenant_id=${encodeURIComponent(DEMO_TENANT_ID)}`,
+    {},
+    token,
+  );
+}
+
+export async function uploadInvoice(
+  token: string,
+  file: File,
+  customerId: string,
+): Promise<UploadResponse> {
+  const formData = new FormData();
+  formData.append("tenant_id", DEMO_TENANT_ID);
+  formData.append("customer_id", customerId);
+  formData.append("file", file);
+
+  return request<UploadResponse>(
+    "/invoices/upload",
+    {
       method: "POST",
-      body: JSON.stringify({ email, password })
-    });
-  },
+      body: formData,
+    },
+    token,
+  );
+}
 
-  me: (token: string) => request<UserProfile>("/auth/me", {}, token),
-
-  listTenants: () => request<Tenant[]>("/tenants"),
-
-  createTenant: (payload: {
-    name: string;
-    erp_provider: string;
-    crm_provider: string;
-    actor_user_id: string;
-  }) =>
-    request<Tenant>("/tenants", {
+export async function approveReview(
+  token: string,
+  reviewId: string,
+  comment: string,
+): Promise<Review> {
+  return request<Review>(
+    `/reviews/${reviewId}/approve`,
+    {
       method: "POST",
-      body: JSON.stringify(payload)
-    }),
+      body: JSON.stringify({ comment }),
+    },
+    token,
+  );
+}
 
-  bootstrapAdmin: (payload: {
-    tenant_id: string;
-    email: string;
-    full_name: string;
-    password: string;
-  }) =>
-    request<UserProfile>("/auth/bootstrap-admin", {
+export async function rejectReview(
+  token: string,
+  reviewId: string,
+  comment: string,
+): Promise<Review> {
+  return request<Review>(
+    `/reviews/${reviewId}/reject`,
+    {
       method: "POST",
-      body: JSON.stringify(payload)
-    }),
+      body: JSON.stringify({ comment }),
+    },
+    token,
+  );
+}
 
-  listCustomers: (tenantId: string, token: string) =>
-    request<Customer[]>(`/customers?tenant_id=${encodeURIComponent(tenantId)}`, {}, token),
-
-  listInvoices: (tenantId: string, token: string) =>
-    request<Invoice[]>(`/invoices?tenant_id=${encodeURIComponent(tenantId)}`, {}, token),
-
-  listPendingReviews: (tenantId: string, token: string) =>
-    request<Review[]>(`/reviews/pending?tenant_id=${encodeURIComponent(tenantId)}`, {}, token),
-
-  uploadInvoice: (
-    payload: { tenantId: string; customerId?: string; file: File },
-    token: string
-  ) => {
-    const form = new FormData();
-    form.append("tenant_id", payload.tenantId);
-    if (payload.customerId) {
-      form.append("customer_id", payload.customerId);
-    }
-    form.append("file", payload.file);
-
-    return request<UploadResult>(
-      "/invoices/upload",
-      {
-        method: "POST",
-        body: form
-      },
-      token
-    );
-  },
-
-  approveReview: (reviewId: string, comment: string, token: string) =>
-    request<Review>(
-      `/reviews/${encodeURIComponent(reviewId)}/approve`,
-      {
-        method: "POST",
-        body: JSON.stringify({ comment })
-      },
-      token
-    ),
-
-  rejectReview: (reviewId: string, comment: string, token: string) =>
-    request<Review>(
-      `/reviews/${encodeURIComponent(reviewId)}/reject`,
-      {
-        method: "POST",
-        body: JSON.stringify({ comment })
-      },
-      token
-    ),
-
-  requestChanges: (reviewId: string, comment: string, token: string) =>
-    request<Review>(
-      `/reviews/${encodeURIComponent(reviewId)}/request-changes`,
-      {
-        method: "POST",
-        body: JSON.stringify({ comment })
-      },
-      token
-    )
-};
+export async function checkHealth(): Promise<boolean> {
+  try {
+    const health = await request<{ status: string }>("/health");
+    return health.status === "ok";
+  } catch {
+    return false;
+  }
+}

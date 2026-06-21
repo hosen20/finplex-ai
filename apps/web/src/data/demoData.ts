@@ -1,113 +1,122 @@
-import type { Customer, DashboardData, Invoice, Review, Tenant } from "../types";
+import type { Customer, Invoice, Review, User } from "../types";
+
+export type Tenant = {
+  tenant_id: string;
+  name: string;
+  status: string;
+};
+
+export type DashboardData = {
+  tenant: Tenant;
+  users: User[];
+  customers: Customer[];
+  invoices: Invoice[];
+  reviews: Review[];
+};
+
+const now = new Date().toISOString();
+
+export const DEMO_TENANT_ID = "tenant_demo_clinic";
 
 export const demoTenant: Tenant = {
-  tenant_id: "tenant_demo",
-  name: "Finplex Demo Workspace",
-  erp_provider: "Oracle ERP Cloud",
-  crm_provider: "Salesforce CRM",
-  status: "active"
+  tenant_id: DEMO_TENANT_ID,
+  name: "Finplex Manual Upload Demo",
+  status: "ACTIVE"
 };
+
+export const demoUsers: User[] = [
+  {
+    user_id: "user_demo_admin",
+    tenant_id: DEMO_TENANT_ID,
+    email: "clinadmin@example.com",
+    full_name: "Clinical Admin Demo",
+    role: "TENANT_ADMIN",
+    is_active: true
+  },
+  {
+    user_id: "user_demo_manager",
+    tenant_id: DEMO_TENANT_ID,
+    email: "manager@example.com",
+    full_name: "Operations Manager Demo",
+    role: "MANAGER",
+    is_active: true
+  }
+];
 
 export const demoCustomers: Customer[] = [
   {
-    customer_id: "cust_acme",
-    tenant_id: demoTenant.tenant_id,
-    company_name: "Acme Distribution",
-    contact_name: "Maya Carter",
-    contact_email: "maya.carter@acme.example",
+    customer_id: "cust_demo_accept",
+    tenant_id: DEMO_TENANT_ID,
+    company_name: "Aurora Medical Supplies",
+    contact_name: "Maya Haddad",
+    contact_email: "maya.haddad@aurora-demo.example",
     preferred_contact_channel: "email",
-    relationship_status: "active",
-    tags: ["enterprise", "payment-plan"]
+    relationship_status: "healthy",
+    tags: ["approval-demo", "invoice-follow-up"],
+    created_at: now,
+    updated_at: null
   },
   {
-    customer_id: "cust_nova",
-    tenant_id: demoTenant.tenant_id,
-    company_name: "Nova Retail Group",
-    contact_name: "Samir Haddad",
-    contact_email: "samir.haddad@nova.example",
+    customer_id: "cust_demo_reject",
+    tenant_id: DEMO_TENANT_ID,
+    company_name: "Cedar Retail Group",
+    contact_name: "Omar Nasser",
+    contact_email: "omar.nasser@cedar-demo.example",
     preferred_contact_channel: "email",
-    relationship_status: "watchlist",
-    tags: ["retail", "recent-dispute"]
+    relationship_status: "open_dispute",
+    tags: ["rejection-demo", "open-dispute"],
+    created_at: now,
+    updated_at: null
   }
 ];
 
 export const demoInvoices: Invoice[] = [
   {
-    invoice_id: "new_inv_001",
-    tenant_id: demoTenant.tenant_id,
-    customer_id: "cust_acme",
+    invoice_id: "demo_invoice_accept_placeholder",
+    tenant_id: DEMO_TENANT_ID,
+    uploaded_by_user_id: "user_demo_admin",
+    customer_id: "cust_demo_accept",
     file_name: "NEW-00001.png",
-    storage_key: "tenant_demo/invoices/new_inv_001/NEW-00001.png",
-    status: "review_pending",
+    storage_key: "manual-demo/NEW-00001.png",
+    status: "UPLOADED",
+    payment_status: "UNPAID",
     extracted_fields: {
       invoice_number: "NEW-00001",
-      customer_name: "Acme Distribution",
-      amount_due: 13600,
-      currency: "USD",
-      due_date: "2026-07-01",
-      payment_terms: "net_30"
+      amount_due: "12450.00",
+      currency: "USD"
     },
-    evidence_ids: ["ev_invoice", "ev_erp", "ev_crm", "ev_policy"]
+    evidence_ids: [],
+    created_at: now,
+    updated_at: null
   },
   {
-    invoice_id: "new_inv_002",
-    tenant_id: demoTenant.tenant_id,
-    customer_id: "cust_nova",
+    invoice_id: "demo_invoice_reject_placeholder",
+    tenant_id: DEMO_TENANT_ID,
+    uploaded_by_user_id: "user_demo_admin",
+    customer_id: "cust_demo_reject",
     file_name: "NEW-00002.png",
-    status: "processing",
+    storage_key: "manual-demo/NEW-00002.png",
+    status: "UPLOADED",
+    payment_status: "UNPAID",
     extracted_fields: {
       invoice_number: "NEW-00002",
-      customer_name: "Nova Retail Group",
-      amount_due: 4200,
-      currency: "USD",
-      due_date: "2026-07-10"
+      amount_due: "8700.00",
+      currency: "USD"
     },
-    evidence_ids: ["ev_invoice", "ev_crm"]
-  },
-  {
-    invoice_id: "new_inv_003",
-    tenant_id: demoTenant.tenant_id,
-    file_name: "NEW-00003.png",
-    status: "uploaded",
-    extracted_fields: {
-      invoice_number: "NEW-00003",
-      customer_name: "Atlas Supplies",
-      amount_due: 950,
-      currency: "USD",
-      due_date: "2026-07-15"
-    },
-    evidence_ids: []
+    evidence_ids: [],
+    created_at: now,
+    updated_at: null
   }
 ];
 
-export const demoReviews: Review[] = [
-  {
-    review_id: "review_001",
-    tenant_id: demoTenant.tenant_id,
-    invoice_id: "new_inv_001",
-    risk_level: "high",
-    guardrails_passed: true,
-    status: "pending",
-    evidence_ids: ["ev_invoice", "ev_erp", "ev_crm", "ev_policy"],
-    draft_message:
-      "Hello Maya Carter,\n\nI hope you are well. We are following up on invoice NEW-00001 for USD 13,600.00 due on 2026-07-01. We would appreciate a short update so we can resolve this responsibly. This message is based on available supporting records from invoice, ERP, CRM, and regulation evidence.\n\nPlease let us know if payment has already been arranged or if there is anything we should review with your team.\n\nThank you."
-  },
-  {
-    review_id: "review_002",
-    tenant_id: demoTenant.tenant_id,
-    invoice_id: "new_inv_002",
-    risk_level: "medium",
-    guardrails_passed: true,
-    status: "pending",
-    evidence_ids: ["ev_invoice", "ev_crm"],
-    draft_message:
-      "Hello Samir Haddad,\n\nThis is a respectful reminder for invoice NEW-00002. Could you please share the expected payment timing or tell us if anything needs review?\n\nThank you."
-  }
-];
+export const demoReviews: Review[] = [];
 
 export const demoDashboardData: DashboardData = {
-  tenants: [demoTenant],
+  tenant: demoTenant,
+  users: demoUsers,
   customers: demoCustomers,
   invoices: demoInvoices,
   reviews: demoReviews
 };
+
+export default demoDashboardData;
