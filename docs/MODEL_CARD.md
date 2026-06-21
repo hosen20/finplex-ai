@@ -1,60 +1,81 @@
-# Finplex AI Late-Payment Risk Model
+# Model Card
 
-## Purpose
+This model card documents the AI components used by Finplex AI.
 
-This model predicts the late-payment risk level for a new uploaded invoice.
+## AI Components
 
-The model does not rely on the uploaded invoice already existing in ERP. Instead, it combines the new invoice details with historical customer ERP/CRM behavior.
+| Component | Purpose |
+|---|---|
+| OCR / extraction | Read invoice files and extract structured fields |
+| Retrieval | Find tenant-scoped ERP, CRM, invoice, and policy evidence |
+| Risk model | Estimate payment risk using structured features |
+| LLM drafting | Draft respectful follow-up messages grounded in evidence |
+| Guardrails | Validate safety, tone, evidence, and human-review requirements |
 
-## Workflow
+## Intended Use
 
-new invoice image
-→ OCR extraction
-→ customer matching
-→ historical ERP/CRM lookup
-→ risk prediction
-→ follow-up draft
-→ human review
+The AI system is intended to assist finance teams by summarizing evidence, estimating risk, and drafting reviewable payment follow-up messages.
 
-## Target Labels
+It is not intended to automatically contact customers or make final collection decisions without human approval.
 
-- low
-- medium
-- high
-- critical
+## Risk Model
 
-## Best Model
+The risk model predicts a risk score and risk level from structured features such as:
 
-Selected model: `logistic_regression`
+- days overdue
+- amount due
+- payment status
+- dispute count
+- previous delays
+- CRM note count
+- recent promise-to-pay signal
+- relationship status
 
-## Metrics
+Artifacts:
 
-- Accuracy: 0.6920
-- Macro F1: 0.5762
-- Weighted F1: 0.7096
+```text
+models/risk_model.joblib
+models/risk_model_metadata.json
+models/risk_feature_schema.json
+models/risk_label_mapping.json
+```
 
-## Main Feature Groups
+## Drafting Model
 
-The model uses:
+The drafting model produces a suggested follow-up message. It must use retrieved evidence and avoid unsupported claims.
 
-- new invoice amount
-- payment terms
-- country code
-- previous invoice count
-- previous late payments
-- previous disputed invoice count
-- previous average days late
-- previous max days late
-- previous on-time payment rate
-- previous CRM negative signal score
-- relationship age
+Drafts must be reviewed by a human before use.
+
+## Retrieval
+
+Retrieval uses tenant-scoped evidence. Evidence can come from ERP records, CRM notes, policy documents, invoice text, and previous decisions.
+
+## Guardrails
+
+Guardrails check:
+
+- respectful tone
+- evidence grounding
+- prohibited language
+- privacy concerns
+- human review requirement
 
 ## Limitations
 
-This model is trained on a public accounts-receivable dataset transformed into local ERP/CRM seed data.
+- OCR quality depends on invoice image quality.
+- Retrieval is only as complete as the indexed evidence.
+- Risk scoring supports prioritization, not final judgment.
+- LLM drafts can be incomplete or overly generic.
+- Human reviewers remain responsible for final decisions.
 
-The model should not automatically send debt-collection messages. It should support a human-reviewed workflow.
+## Monitoring
 
-## Responsible Use
+Each AI run should log:
 
-Predictions must be used as decision support only. Final customer communication must pass guardrails and human approval.
+- model version
+- prompt version
+- evidence ids
+- risk score
+- guardrail status
+- reviewer decision
+- trace id

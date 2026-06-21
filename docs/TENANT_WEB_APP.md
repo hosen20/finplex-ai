@@ -1,26 +1,74 @@
-# Tenant Web App
+# React Tenant Workspace
 
-The React web app is the tenant-facing Finplex AI product. It is not used for public signup and it does not create companies. Company onboarding is controlled by the Streamlit Platform Admin console.
+The React app is the product workspace for tenant users.
 
-## User Flow
+## Run
 
-1. A platform admin creates a tenant in Streamlit.
-2. A platform admin creates the first tenant admin for that tenant.
-3. The tenant admin signs in to the React web app.
-4. The tenant admin creates managers, reviewers, and auditors for their own company.
-5. Tenant users upload invoices, inspect ERP/CRM evidence, review AI drafts, and approve or reject actions.
+```bash
+cd apps/web
+npm run dev
+```
 
-## Role Behavior
+Open:
 
-| Role | React capabilities |
-| --- | --- |
-| tenant_admin | View workspace, upload invoices, review drafts, and create tenant users. |
-| manager | View workspace, upload invoices, and review finance workflows. |
-| reviewer | View review queue and make human approval decisions. |
-| auditor | Inspect tenant records and evidence without operational actions. |
+```text
+http://localhost:5173
+```
 
-## Product Boundary
+## Login
 
-The React app only uses the signed-in user's tenant from the JWT-backed `/auth/me` session. The UI no longer contains hardcoded demo tenants or demo account buttons.
+Users log in with accounts created by a platform admin or tenant admin. There is no public sign-up.
 
-The backend still enforces tenant isolation and RBAC. UI checks are convenience only and are not treated as security controls.
+## Main User Workflows
+
+### Tenant Admin
+
+- manage tenant users
+- assign roles
+- view invoices
+- view customers
+- inspect review queue
+- review audit history
+
+### Manager
+
+- view dashboard metrics
+- inspect invoices
+- inspect customer intelligence
+- track review status
+
+### Reviewer
+
+- open AI review queue
+- inspect invoice fields
+- inspect ERP and CRM evidence
+- inspect retrieved evidence
+- review risk score and reasons
+- approve, edit, or reject draft
+
+### Auditor
+
+- view decision history
+- view audit logs
+- inspect trace information
+
+## Important Product Rules
+
+- The app uses the logged-in user's tenant.
+- The app must not hardcode tenant ids.
+- The app must not expose platform admin features.
+- Tenant creation happens in Streamlit Platform Admin.
+- Customer-facing drafts require human approval.
+
+## Recommended Review Flow
+
+1. Open review queue.
+2. Select invoice.
+3. Check invoice preview and extracted fields.
+4. Check ERP payment facts.
+5. Check CRM notes and disputes.
+6. Check retrieved evidence.
+7. Check risk score and reasons.
+8. Read generated draft.
+9. Confirm guardrails passed.
+10. Approve, edit, or reject.
