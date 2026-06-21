@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa: E402, I001
 """Seed Finplex AI with reproducible local product data.
 
 The seed data is privacy-safe and local. It combines the prepared IBM-style
@@ -642,6 +643,7 @@ def seed_rag_documents(session: Any, tenant: TenantSeed) -> None:
 
         for chunk_index, chunk in enumerate(chunk_text(text)):
             chunk_id = f"rag_{tenant.tenant_id}_{slug}_{chunk_index:03d}"
+            embedding = deterministic_embedding(chunk)
             session.merge(
                 RagChunkModel(
                     chunk_id=chunk_id,
@@ -649,7 +651,8 @@ def seed_rag_documents(session: Any, tenant: TenantSeed) -> None:
                     document_id=document_id,
                     content=chunk,
                     chunk_index=chunk_index,
-                    embedding=deterministic_embedding(chunk),
+                    embedding=embedding,
+                    embedding_vector=embedding,
                 )
             )
 
