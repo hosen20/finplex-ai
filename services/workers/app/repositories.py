@@ -85,6 +85,18 @@ def utc_now() -> datetime:
     return datetime.now(UTC)
 
 
+def db_audit_action_name(action: str) -> str:
+    """Map worker audit names to API enum-safe values."""
+    action_map = {
+        "invoice_processing_started": "INVOICE_PROCESSED",
+        "evidence_retrieved": "INVOICE_PROCESSED",
+        "guardrails_validated": "GUARDRAILS_CHECKED",
+        "invoice_processed": "INVOICE_PROCESSED",
+        "invoice_processing_failed": "INVOICE_PROCESSED",
+    }
+    return action_map.get(action, action.upper())
+
+
 class InvoiceProcessingRepository:
     """Database writes needed by the asynchronous invoice worker."""
 
@@ -107,7 +119,7 @@ class InvoiceProcessingRepository:
         evidence_ids: list[str] | None = None,
     ) -> None:
         values: dict[str, Any] = {
-            "status": status,
+            "status": status.upper(),
             "updated_at": utc_now(),
         }
 
@@ -142,10 +154,10 @@ class InvoiceProcessingRepository:
             tenant_id=tenant_id,
             invoice_id=invoice_id,
             draft_message=draft_message,
-            risk_level=risk_level,
+            risk_level=risk_level.upper(),
             guardrails_passed=guardrails_passed,
             evidence_ids=evidence_ids,
-            status="pending",
+            status="PENDING",
             reviewer_user_id=None,
             reviewer_comment=None,
             created_at=now,
@@ -168,7 +180,7 @@ class InvoiceProcessingRepository:
         statement = insert(audit_events_table).values(
             audit_event_id=f"audit_{uuid4().hex}",
             tenant_id=tenant_id,
-            action=action,
+            action=db_audit_action_name(action),
             actor_user_id=actor_user_id,
             entity_type=entity_type,
             entity_id=entity_id,

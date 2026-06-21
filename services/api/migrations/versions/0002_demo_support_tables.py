@@ -43,7 +43,11 @@ def upgrade() -> None:
         ),
     )
     op.create_index("ix_erp_invoices_tenant_id", "erp_invoices", ["tenant_id"])
-    op.create_index("ix_erp_invoices_customer_id", "erp_invoices", ["customer_id"])
+    op.create_index(
+        "ix_erp_invoices_customer_id",
+        "erp_invoices",
+        ["customer_id"],
+    )
     op.create_index(
         "ix_erp_invoices_invoice_number",
         "erp_invoices",
@@ -68,7 +72,11 @@ def upgrade() -> None:
         ),
     )
     op.create_index("ix_erp_payments_tenant_id", "erp_payments", ["tenant_id"])
-    op.create_index("ix_erp_payments_customer_id", "erp_payments", ["customer_id"])
+    op.create_index(
+        "ix_erp_payments_customer_id",
+        "erp_payments",
+        ["customer_id"],
+    )
     op.create_index(
         "ix_erp_payments_erp_invoice_id",
         "erp_payments",
@@ -119,8 +127,16 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
     )
-    op.create_index("ix_crm_disputes_tenant_id", "crm_disputes", ["tenant_id"])
-    op.create_index("ix_crm_disputes_customer_id", "crm_disputes", ["customer_id"])
+    op.create_index(
+        "ix_crm_disputes_tenant_id",
+        "crm_disputes",
+        ["tenant_id"],
+    )
+    op.create_index(
+        "ix_crm_disputes_customer_id",
+        "crm_disputes",
+        ["customer_id"],
+    )
 
     op.create_table(
         "rag_documents",
@@ -137,7 +153,11 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
     )
-    op.create_index("ix_rag_documents_tenant_id", "rag_documents", ["tenant_id"])
+    op.create_index(
+        "ix_rag_documents_tenant_id",
+        "rag_documents",
+        ["tenant_id"],
+    )
 
     op.create_table(
         "rag_chunks",
