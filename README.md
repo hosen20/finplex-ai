@@ -1,4 +1,34 @@
-# Finplex AI
+<div align="center">
+  <img src="docs/assets/brand/finplex-ai-logo.png" alt="Finplex AI logo" width="180" />
+
+  <h1>Finplex AI</h1>
+
+  <p><strong>AI Invoice Intelligence &amp; Responsible Payment Follow-Up for FinTech SaaS</strong></p>
+
+  <p>
+    Connect invoice uploads, ERP payment records, CRM context, AI risk scoring, guardrails, and human approval into one tenant-isolated workflow.
+  </p>
+
+  <p>
+    <img alt="CI" src="https://img.shields.io/badge/CI-passing-brightgreen?style=flat-square" />
+    <img alt="Python" src="https://img.shields.io/badge/python-3.11-blue?style=flat-square&amp;logo=python&amp;logoColor=white" />
+    <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-async-009688?style=flat-square&amp;logo=fastapi&amp;logoColor=white" />
+    <img alt="React" src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&amp;logo=react&amp;logoColor=black" />
+    <img alt="LangGraph" src="https://img.shields.io/badge/LangGraph-agents-1f6f64?style=flat-square" />
+    <img alt="Kafka" src="https://img.shields.io/badge/Kafka-events-231F20?style=flat-square&amp;logo=apachekafka&amp;logoColor=white" />
+    <img alt="pgvector" src="https://img.shields.io/badge/pgvector-RAG-336791?style=flat-square&amp;logo=postgresql&amp;logoColor=white" />
+  </p>
+
+  <p>
+    <a href="#product-interface-previews">Demo</a> ·
+    <a href="#architecture">Architecture</a> ·
+    <a href="#local-setup">Quick start</a> ·
+    <a href="#documentation">Docs</a> ·
+    <a href="#suggested-review-path">For reviewers</a>
+  </p>
+</div>
+
+---
 
 Finplex AI is a local-first FinTech SaaS product for invoice intelligence and responsible payment follow-up. It connects invoice uploads, ERP-style payment records, CRM-style customer context, OCR/text extraction, LangGraph orchestration, LangChain Core nodes, ML risk scoring, pgvector RAG retrieval, LLM-style draft generation, guardrails, and human approval into one tenant-isolated workflow.
 
@@ -50,18 +80,18 @@ Audit log stores the decision with tenant_id and trace_id
 ## Architecture
 
 ```text
-apps/admin        Streamlit platform admin console
-apps/web          React tenant workspace
-services/api      FastAPI product API, auth, RBAC, tenant isolation
-services/workers  Kafka consumers, local OCR/text extraction, async jobs
+apps/admin             Streamlit platform admin console
+apps/web               React tenant workspace
+services/api           FastAPI product API, auth, RBAC, tenant isolation
+services/workers       Kafka consumers, local OCR/text extraction, async jobs
 services/model-server  LangGraph/LangChain AI pipeline, extraction, RAG, risk, drafting
 services/guardrails    Policy checks for safe customer-facing drafts
-infra             Local Docker infrastructure scripts
-models            Trained risk model artifacts and metadata
-notebooks         Training and evaluation notebooks
-regulations       Human-readable and machine-readable policy rules
-evals             Golden evaluation scripts and thresholds
-docs              Architecture, setup, security, runbook, and review docs
+infra                  Local Docker infrastructure scripts
+models                 Trained risk model artifacts and metadata
+notebooks              Training and evaluation notebooks
+regulations            Human-readable and machine-readable policy rules
+evals                  Golden evaluation scripts and thresholds
+docs                   Architecture, setup, security, runbook, and review docs
 ```
 
 ## Core Technologies
