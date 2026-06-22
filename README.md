@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/brand/finplex-ai-logo.png" alt="Finplex AI logo" width="180" />
+  <img src="docs/assets/brand/finplex-ai-logo.png" alt="Finplex AI logo" width="270" height="270" />
 
   <h1>Finplex AI</h1>
 
