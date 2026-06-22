@@ -84,3 +84,4 @@ def test_pipeline_service_builds_risk_features_from_extraction() -> None:
     assert response.risk.risk_level in {"medium", "high", "critical"}
     assert response.risk.top_risk_signals
     assert response.draft.evidence_ids
+    assert response.orchestration["engine"] == "langgraph"

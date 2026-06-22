@@ -140,6 +140,7 @@ class DraftMessageResponse(BaseModel):
 
 
 class InvoicePipelineRequest(InvoiceExtractionRequest):
+    context: dict[str, Any] = Field(default_factory=dict)
     days_overdue: int = Field(0, ge=0)
     has_dispute: bool = False
     previous_late_payments: int = Field(0, ge=0)
@@ -152,3 +153,4 @@ class InvoicePipelineResponse(BaseModel):
     risk: RiskScoreResponse
     draft: DraftMessageResponse
     citations: list[EvidenceCitation] = Field(default_factory=list)
+    orchestration: dict[str, Any] = Field(default_factory=dict)

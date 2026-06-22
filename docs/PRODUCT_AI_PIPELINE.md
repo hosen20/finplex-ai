@@ -1,46 +1,44 @@
 # Product AI Pipeline
 
-Finplex AI processes invoices asynchronously so the React upload request stays fast and the expensive AI work happens in the worker.
+Finplex AI processes invoices asynchronously and requires human approval before any customer-facing follow-up is accepted.
 
-## Final local product flow
-
-1. A tenant user uploads an invoice from the React workspace.
-2. The FastAPI upload route stores the file, creates invoice metadata, and emits an `invoice.uploaded` Kafka event.
-3. The worker consumes the event and marks the invoice as `processing`.
-4. The worker reads invoice text from the stored file or OCR sidecar.
-5. The worker calls the model-server `/process-invoice` endpoint once.
-6. The model-server runs extraction, risk scoring, RAG evidence retrieval, and draft generation.
-7. The worker sends the draft to the guardrails service.
-8. The worker creates a human review record and updates the invoice to `review_pending`.
-9. The reviewer approves, edits, or rejects the draft from the tenant workspace.
-10. Audit events preserve the trace from upload to review.
-
-## Why the worker now uses `/process-invoice`
-
-Earlier versions called extraction, risk, RAG, and drafting as separate HTTP requests. PR9 keeps the individual model-server endpoints available for testing and debugging, but the worker now uses the full pipeline endpoint as the product path.
-
-This gives a clearer production workflow:
+## Product Flow
 
 ```text
-Kafka invoice.uploaded
-  -> worker
-  -> model-server /process-invoice
-  -> guardrails /validate-message
-  -> review queue
-  -> audit trail
+React upload
+  -> FastAPI stores invoice and emits Kafka event
+  -> worker consumes invoice.uploaded
+  -> worker reads invoice text/OCR payload
+  -> worker calls model-server /process-invoice
+  -> model-server runs LangGraph orchestration
+  -> worker calls guardrails
+  -> worker creates human review
+  -> invoice becomes review_pending
+  -> reviewer approves/rejects
+  -> invoice becomes approved/rejected
 ```
 
-## Human approval remains mandatory
+## LangGraph Model-Server Workflow
 
-The LLM/drafting step never sends customer-facing communication directly. The result always becomes a pending review. Guardrails can pass or fail the draft, but both cases still require a human reviewer before customer communication.
+Inside the model-server, `/process-invoice` is backed by LangGraph:
 
-## Evidence and traceability
+```text
+extract_invoice -> score_risk -> retrieve_evidence -> draft_message -> build_response
+```
 
-The worker stores evidence IDs on the invoice and review. It also writes audit records for:
+The response includes extraction results, risk scoring, retrieved citations, the drafted message, and an `orchestration` trace.
 
-- invoice processing start
-- evidence retrieval
-- guardrails validation
-- invoice processed or failed
+## What Each Stage Does
 
-The invoice `extracted_fields.ai_pipeline` object stores useful review metadata such as risk level, risk score, retrieval method, guardrail decision, and review ID.
+| Stage | Purpose |
+| --- | --- |
+| Invoice extraction | Reads OCR/text and extracts invoice number, customer, amount, due date, and terms. |
+| Risk scoring | Scores late-payment risk from extracted amount and customer/payment features. |
+| Evidence retrieval | Retrieves invoice, ERP, CRM, and policy evidence for grounded drafting. |
+| LLM-style drafting | Creates a respectful follow-up draft using only extracted facts and retrieved evidence. |
+| Guardrails | Validates that the draft is respectful, evidence-based, and safe. |
+| Human review | Requires a reviewer to approve, reject, or edit the draft. |
+
+## Why This Is Product-Ready
+
+The pipeline is not a chatbot-only path. It is event-driven, tenant-scoped, evidence-grounded, guardrailed, and human-approved. LangGraph makes the AI orchestration explicit while Kafka and FastAPI keep the product workflow reliable.
