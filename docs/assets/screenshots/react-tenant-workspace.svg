@@ -30,11 +30,12 @@
   <text x="144" y="559" fill="#374151" font-family="Inter, Arial, sans-serif" font-size="15">INV-2026-121 • Cedar Clinic • Medium</text>
   <rect x="646" y="404" width="528" height="208" rx="18" fill="#ffffff" stroke="#d1d5db"/>
   <text x="678" y="448" fill="#111827" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">Evidence-Grounded Draft</text>
-  <text x="678" y="488" fill="#374151" font-family="Inter, Arial, sans-serif" font-size="15">Risk signals, ERP/CRM citations, and policy evidence are visible before approval.</text>
-  <rect x="678" y="522" width="150" height="44" rx="12" fill="#047857"/>
-  <text x="720" y="550" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Approve</text>
-  <rect x="846" y="522" width="150" height="44" rx="12" fill="#f3f4f6" stroke="#d1d5db"/>
-  <text x="892" y="550" fill="#111827" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Edit</text>
-  <rect x="1014" y="522" width="128" height="44" rx="12" fill="#f3f4f6" stroke="#d1d5db"/>
-  <text x="1054" y="550" fill="#111827" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Reject</text>
+  <text x="678" y="488" fill="#374151" font-family="Inter, Arial, sans-serif" font-size="15">Risk signals, ERP/CRM citations, and policy evidence</text>
+  <text x="678" y="512" fill="#374151" font-family="Inter, Arial, sans-serif" font-size="15">are visible before approval.</text>
+  <rect x="678" y="540" width="150" height="44" rx="12" fill="#047857"/>
+  <text x="720" y="568" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Approve</text>
+  <rect x="846" y="540" width="150" height="44" rx="12" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="892" y="568" fill="#111827" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Edit</text>
+  <rect x="1014" y="540" width="128" height="44" rx="12" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="1054" y="568" fill="#111827" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Reject</text>
 </svg>
