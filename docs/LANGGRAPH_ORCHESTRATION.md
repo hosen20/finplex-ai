@@ -1,6 +1,6 @@
 # LangGraph AI Orchestration
 
-Finplex AI now uses LangGraph inside the model-server to make the invoice AI workflow explicit, inspectable, and testable.
+Finplex AI uses LangGraph inside the model-server to make the invoice AI workflow explicit, inspectable, and testable. The graph nodes are implemented with LangChain Core `RunnableLambda` wrappers so the project can accurately claim both LangGraph orchestration and LangChain Core usage.
 
 ## Why LangGraph Was Added
 
@@ -42,7 +42,7 @@ The worker does not need to know about LangGraph. It still calls the model-serve
 
 ## LangChain Usage
 
-The graph nodes are wrapped with `langchain-core` `RunnableLambda` objects. This keeps the implementation simple now while leaving room to replace deterministic service calls with LangChain tools or provider-backed runnables later.
+The graph nodes are wrapped with `langchain-core` `RunnableLambda` objects in `services/model-server/app/services/langgraph_pipeline.py`. This keeps the implementation simple and testable now while leaving room to replace deterministic service calls with LangChain tools or provider-backed runnables later.
 
 ## Response Metadata
 
