@@ -204,6 +204,9 @@ def test_process_event_creates_review_and_updates_invoice() -> None:
 
     assert len(model_client.pipeline_calls) == 1
     assert model_client.pipeline_calls[0]["text"].startswith("Invoice number")
+    assert model_client.pipeline_calls[0]["pipeline_context"]["ocr_engine"] == (
+        "legacy_text_reader"
+    )
     assert guardrails_client.calls[0]["risk_level"] == "high"
     assert guardrails_client.calls[0]["evidence_ids"] == [
         "ev_extract",
@@ -216,6 +219,7 @@ def test_process_event_creates_review_and_updates_invoice() -> None:
     assert extracted_fields["ai_pipeline"]["review_id"] == "review_1"
     assert extracted_fields["ai_pipeline"]["pipeline_version"] == "pipeline_v1"
     assert extracted_fields["ai_pipeline"]["guardrails_passed"] is True
+    assert extracted_fields["ai_pipeline"]["ocr"]["engine"] == "legacy_text_reader"
 
 
 def test_guardrail_failure_still_routes_to_human_review() -> None:

@@ -134,7 +134,23 @@ class InvoiceProcessingService:
                 },
             )
 
-            invoice_text = self.text_reader.read_text(event)
+            ocr_result = self._read_invoice_text(event)
+            invoice_text = str(ocr_result["text"])
+
+            self.repository.record_audit(
+                tenant_id=event.tenant_id,
+                action="ocr_text_extracted",
+                actor_user_id=None,
+                entity_type="invoice",
+                entity_id=event.invoice_id,
+                trace_id=trace_id,
+                metadata_json={
+                    "ocr_engine": ocr_result["engine"],
+                    "ocr_source": ocr_result["source"],
+                    "ocr_confidence": ocr_result["confidence"],
+                    "text_length": len(invoice_text),
+                },
+            )
 
             pipeline = self.model_client.process_invoice(
                 invoice_id=event.invoice_id,
@@ -147,6 +163,10 @@ class InvoiceProcessingService:
                     "uploaded_by_user_id": event.uploaded_by_user_id,
                     "content_type": event.content_type,
                     "size_bytes": event.size_bytes,
+                    "ocr_engine": ocr_result["engine"],
+                    "ocr_source": ocr_result["source"],
+                    "ocr_confidence": ocr_result["confidence"],
+                    "ocr_text_length": len(invoice_text),
                 },
             )
 
@@ -238,6 +258,7 @@ class InvoiceProcessingService:
                     guardrails=guardrails,
                     risk_level=risk_level,
                     review_id=review_id,
+                    ocr_result=ocr_result,
                 ),
                 evidence_ids=evidence_ids,
             )
@@ -290,6 +311,34 @@ class InvoiceProcessingService:
         )
         self.repository.commit()
 
+    def _read_invoice_text(
+        self,
+        event: InvoiceUploadedEvent,
+    ) -> dict[str, Any]:
+        reader_with_result = getattr(self.text_reader, "read_result", None)
+        if callable(reader_with_result):
+            result = reader_with_result(event)
+            metadata_method = getattr(result, "to_pipeline_metadata", None)
+            metadata = metadata_method() if callable(metadata_method) else {}
+            return {
+                "text": getattr(result, "text", ""),
+                "engine": getattr(result, "engine", "unknown"),
+                "source": getattr(result, "source", "unknown"),
+                "confidence": float(getattr(result, "confidence", 0.0)),
+                "text_length": len(getattr(result, "text", "")),
+                "metadata": metadata,
+            }
+
+        text = self.text_reader.read_text(event)
+        return {
+            "text": text,
+            "engine": "legacy_text_reader",
+            "source": "text_reader",
+            "confidence": 0.7,
+            "text_length": len(text),
+            "metadata": {},
+        }
+
     def _enrich_extracted_fields(
         self,
         *,
@@ -298,6 +347,7 @@ class InvoiceProcessingService:
         guardrails: dict[str, Any],
         risk_level: str,
         review_id: str,
+        ocr_result: dict[str, Any],
     ) -> dict[str, Any]:
         risk = dict(pipeline.get("risk", {}))
         draft = dict(pipeline.get("draft", {}))
@@ -319,6 +369,12 @@ class InvoiceProcessingService:
                 "guardrails_passed": bool(guardrails.get("passed", False)),
                 "guardrail_decision": guardrails.get("decision"),
                 "review_id": review_id,
+                "ocr": {
+                    "engine": ocr_result["engine"],
+                    "source": ocr_result["source"],
+                    "confidence": ocr_result["confidence"],
+                    "text_length": ocr_result["text_length"],
+                },
             },
         }
 

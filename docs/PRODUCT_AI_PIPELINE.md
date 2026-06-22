@@ -42,3 +42,20 @@ The response includes extraction results, risk scoring, retrieved citations, the
 ## Why This Is Product-Ready
 
 The pipeline is not a chatbot-only path. It is event-driven, tenant-scoped, evidence-grounded, guardrailed, and human-approved. LangGraph makes the AI orchestration explicit while Kafka and FastAPI keep the product workflow reliable.
+
+## OCR extraction layer
+
+The worker now performs an explicit OCR/text-extraction step before calling the
+model-server `/process-invoice` endpoint. This keeps upload fast while making the
+async product pipeline clearer:
+
+```text
+invoice.uploaded event
+  -> LocalOcrService extracts invoice text
+  -> model-server LangGraph pipeline processes extracted text
+  -> guardrails validates the draft
+  -> human review is created
+```
+
+OCR metadata is stored in the invoice `ai_pipeline` object and an
+`ocr_text_extracted` audit event is written for traceability.
