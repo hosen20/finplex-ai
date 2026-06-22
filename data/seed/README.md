@@ -18,8 +18,7 @@ The seed command maps these files into realistic local tenants:
 - `tenant_cedar_finance`
 - `tenant_orion_medical`
 
-The empty JSON placeholders are kept only as future extension points. The current
-source of truth for product seeding is the CSV-backed seeding script:
+The current source of truth for product seeding is the CSV-backed seeding script:
 
 ```bash
 bash scripts/seed-local-data.sh

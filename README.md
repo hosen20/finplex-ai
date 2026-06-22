@@ -1,6 +1,6 @@
 # Finplex AI
 
-Finplex AI is a local-first FinTech SaaS product for invoice intelligence and responsible payment follow-up. It connects invoice uploads, ERP-style payment records, CRM-style customer context, AI extraction, risk scoring, retrieval, draft generation, guardrails, and human approval into one tenant-isolated workflow.
+Finplex AI is a local-first FinTech SaaS product for invoice intelligence and responsible payment follow-up. It connects invoice uploads, ERP-style payment records, CRM-style customer context, OCR/text extraction, LangGraph orchestration, LangChain Core nodes, ML risk scoring, pgvector RAG retrieval, LLM-style draft generation, guardrails, and human approval into one tenant-isolated workflow.
 
 The product has two user surfaces:
 
@@ -8,6 +8,16 @@ The product has two user surfaces:
 - **React Tenant Workspace** for finance teams. Tenant users upload invoices, inspect customer intelligence, review AI recommendations, approve or reject follow-up drafts, and view decision history.
 
 There is no public sign-up. A platform admin creates a tenant first, then creates the first tenant admin. Tenant admins manage users inside their own tenant.
+
+## Product Interface Previews
+
+### Streamlit Platform Admin
+
+![Streamlit Platform Admin preview](docs/assets/screenshots/streamlit-platform-admin.svg)
+
+### React Tenant Workspace
+
+![React Tenant Workspace preview](docs/assets/screenshots/react-tenant-workspace.svg)
 
 ## Product Flow
 
@@ -22,7 +32,13 @@ Tenant user uploads invoice
         ↓
 Backend stores invoice and publishes processing event
         ↓
-Workers call OCR, retrieval, ML risk scoring, LLM drafting, and guardrails
+Worker extracts invoice text/OCR payload
+        ↓
+Model-server runs LangGraph + LangChain Core orchestration
+        ↓
+Pipeline scores risk, retrieves evidence, and drafts a follow-up
+        ↓
+Guardrails validate the draft
         ↓
 Reviewer sees extracted fields, evidence, risk reasons, and draft
         ↓
@@ -37,12 +53,13 @@ Audit log stores the decision with tenant_id and trace_id
 apps/admin        Streamlit platform admin console
 apps/web          React tenant workspace
 services/api      FastAPI product API, auth, RBAC, tenant isolation
-services/workers  Kafka consumers for invoice processing jobs
-services/model-server  OCR, extraction, retrieval, risk scoring, drafting
+services/workers  Kafka consumers, local OCR/text extraction, async jobs
+services/model-server  LangGraph/LangChain AI pipeline, extraction, RAG, risk, drafting
 services/guardrails    Policy checks for safe customer-facing drafts
 infra             Local Docker infrastructure scripts
 models            Trained risk model artifacts and metadata
 notebooks         Training and evaluation notebooks
+regulations       Human-readable and machine-readable policy rules
 evals             Golden evaluation scripts and thresholds
 docs              Architecture, setup, security, runbook, and review docs
 ```
@@ -56,7 +73,8 @@ docs              Architecture, setup, security, runbook, and review docs
 | Backend | FastAPI, Pydantic, SQLAlchemy, Alembic |
 | Data | PostgreSQL, pgvector, Redis, MinIO |
 | Events | Apache Kafka, Zookeeper |
-| AI | OCR, ML risk model, retrieval, LLM drafting, guardrails |
+| AI orchestration | LangGraph, LangChain Core `RunnableLambda` nodes |
+| AI capabilities | Local OCR/text extraction, ML risk scoring, pgvector RAG, LLM-style drafting, guardrails |
 | Quality | pytest, ruff, TypeScript build, golden evals, GitHub Actions |
 
 ## Prerequisites
@@ -201,11 +219,23 @@ Tenant users created by the local seed command:
 tenant_admin@cedarfinance.com / TenantAdmin123!
 manager@cedarfinance.com / TenantAdmin123!
 reviewer@cedarfinance.com / TenantAdmin123!
+auditor@cedarfinance.com / TenantAdmin123!
 
 tenant_admin@orionmedical.com / TenantAdmin123!
 manager@orionmedical.com / TenantAdmin123!
 reviewer@orionmedical.com / TenantAdmin123!
+auditor@orionmedical.com / TenantAdmin123!
 ```
+
+## Suggested Review Path
+
+1. Run infrastructure, migrations, seed data, and services.
+2. Open Streamlit and verify platform-admin tenant management.
+3. Open React and sign in as a seeded tenant admin or reviewer.
+4. Upload a sample invoice image from `data/demo_invoices/manual_upload_images/`.
+5. Verify that the worker extracts OCR text, the model-server runs LangGraph, guardrails pass, and a review is created.
+6. Approve or reject the draft and verify invoice status and audit history.
+7. Run the quality gate.
 
 ## Quality Gate
 
@@ -218,7 +248,7 @@ bash scripts/test.sh
 bash scripts/run-evals.sh
 ```
 
-The GitHub Actions workflow is defined in:
+The main GitHub Actions workflow is defined in:
 
 ```text
 .github/workflows/ci.yml
@@ -236,11 +266,15 @@ Start here:
 
 ```text
 docs/PROJECT_REVIEW_GUIDE.md
+docs/FINAL_REVIEW_CHECKLIST.md
 docs/LOCAL_SETUP.md
 docs/ARCHITECTURE.md
 docs/STREAMLIT_ADMIN.md
 docs/TENANT_WEB_APP.md
-docs/CI_CD.md
+docs/PRODUCT_AI_PIPELINE.md
+docs/LANGGRAPH_ORCHESTRATION.md
+docs/OCR_INVOICE_EXTRACTION.md
+docs/RAG_PGVECTOR.md
 docs/EVALUATIONS.md
 docs/SECURITY.md
 docs/RUNBOOK.md

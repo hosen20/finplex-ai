@@ -16,16 +16,17 @@ Streamlit Platform Admin       React Tenant Workspace
         │                │                │
    PostgreSQL        MinIO             Kafka
  structured data   invoice files   async events
- pgvector-ready                    processing jobs
+   + pgvector                     processing jobs
         │                │                │
         └────────────────┼────────────────┘
                          │
                       Workers
+              OCR/text extraction + async coordination
                          │
         ┌────────────────┼────────────────┐
         │                │                │
   Model Server      Guardrails       Audit Trail
- OCR/RAG/ML/LLM   policy checks     decisions/logs
+LangGraph/RAG/ML/LLM policy checks  decisions/logs
 ```
 
 ## Applications
@@ -63,15 +64,15 @@ app/infrastructure    database, messaging, storage, external clients
 app/api               routers, schemas, error handlers
 ```
 
-Routers should remain thin. Business rules live in application services and domain policies. SQL access belongs in repositories.
+Routers remain thin. Business rules live in application services and domain policies. SQL access belongs in repositories.
 
 ### `services/workers`
 
-Kafka consumers that process invoice events asynchronously. Workers call the model-server and guardrails services, then write results back to the database.
+Kafka consumers that process invoice events asynchronously. Workers read invoice files, perform local OCR/text extraction, call the model-server product pipeline, call guardrails, and write results back to the database.
 
 ### `services/model-server`
 
-AI service for extraction, evidence retrieval, risk scoring, and draft generation. It owns provider-specific AI code so the API does not depend directly on LLM or OCR implementations.
+AI service for structured extraction, LangGraph orchestration, LangChain Core node wrappers, pgvector-backed evidence retrieval, risk scoring, and draft generation. The API does not depend directly on model-server internals.
 
 ### `services/guardrails`
 
@@ -85,11 +86,11 @@ Primary structured database. Stores tenants, users, customers, invoices, ERP rec
 
 ### pgvector
 
-Vector extension for retrieval over tenant-scoped evidence. RAG data must be scoped by tenant and source type.
+Vector extension for retrieval over tenant-scoped evidence. RAG data is scoped by tenant and source type.
 
 ### MinIO
 
-Object storage for invoice files. File paths must include tenant and invoice scope.
+Object storage for invoice files. File paths include tenant and invoice scope.
 
 ### Redis
 
@@ -97,18 +98,18 @@ Short-lived cache and operational helper for local development.
 
 ### Kafka
 
-Event broker for async invoice processing. Events must carry `tenant_id`, `invoice_id`, `trace_id`, and an idempotency key.
+Event broker for async invoice processing. Events carry `tenant_id`, `invoice_id`, `trace_id`, and an idempotency key.
 
 ## Tenant Boundary
 
 Tenant isolation is the central product rule:
 
-- every table that contains tenant data must include `tenant_id`
-- every file path must include tenant scope
-- every Kafka event must include tenant scope
-- every vector record must include tenant scope
-- every audit event must include tenant scope
-- user APIs must derive tenant from JWT claims or authenticated user context
+- every table that contains tenant data includes `tenant_id`
+- every file path includes tenant scope
+- every Kafka event includes tenant scope
+- every vector record includes tenant scope
+- every audit event includes tenant scope
+- user APIs derive tenant from JWT claims or authenticated user context
 
 ## Request Flow
 
@@ -121,7 +122,10 @@ FastAPI stores file in MinIO
 FastAPI creates invoice row
 FastAPI publishes invoice processing event
 Worker consumes event
-Worker calls model-server and guardrails
+Worker extracts OCR/text payload
+Worker calls model-server /process-invoice
+Model-server runs LangGraph/LangChain pipeline
+Worker calls guardrails
 Worker updates invoice/review records
 Reviewer sees result in React
 ```

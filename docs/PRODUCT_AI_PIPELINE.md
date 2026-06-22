@@ -10,7 +10,7 @@ React upload
   -> worker consumes invoice.uploaded
   -> worker reads invoice text/OCR payload
   -> worker calls model-server /process-invoice
-  -> model-server runs LangGraph orchestration
+  -> model-server runs LangGraph orchestration with LangChain Core nodes
   -> worker calls guardrails
   -> worker creates human review
   -> invoice becomes review_pending
@@ -20,7 +20,7 @@ React upload
 
 ## LangGraph Model-Server Workflow
 
-Inside the model-server, `/process-invoice` is backed by LangGraph:
+Inside the model-server, `/process-invoice` is backed by LangGraph and LangChain Core `RunnableLambda` nodes:
 
 ```text
 extract_invoice -> score_risk -> retrieve_evidence -> draft_message -> build_response
@@ -41,7 +41,7 @@ The response includes extraction results, risk scoring, retrieved citations, the
 
 ## Why This Is Product-Ready
 
-The pipeline is not a chatbot-only path. It is event-driven, tenant-scoped, evidence-grounded, guardrailed, and human-approved. LangGraph makes the AI orchestration explicit while Kafka and FastAPI keep the product workflow reliable.
+The pipeline is not a chatbot-only path. It is event-driven, tenant-scoped, evidence-grounded, guardrailed, and human-approved. LangGraph and LangChain Core make the AI orchestration explicit while Kafka and FastAPI keep the product workflow reliable.
 
 ## OCR extraction layer
 
